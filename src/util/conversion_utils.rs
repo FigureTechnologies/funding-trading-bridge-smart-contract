@@ -159,9 +159,9 @@ pub mod tests {
             0, large_result.remainder,
             "Value {amount}: The remainder should be zero because no conversion was necessary",
         );
+        let amount = 6;
         let simple_result = convert_denom(amount, &source_denom, &target_denom)
             .expect("The conversion should succeed with valid inputs");
-        let amount = 6;
         assert_eq!(
             amount, simple_result.target_amount,
             "Value {amount}: The target amount should equate to the input because there is no precision diff",

@@ -10,7 +10,8 @@ pub struct InstantiateMsg {
     pub contract_name: String,
     pub deposit_marker: Denom,
     pub trading_marker: Denom,
-    pub create_trading_marker: Option<bool>,
+    pub required_deposit_attributes: Vec<String>,
+    pub required_withdraw_attributes: Vec<String>,
 }
 impl SelfValidating for InstantiateMsg {
     fn self_validate(&self) -> Result<(), ContractError> {
@@ -30,12 +31,34 @@ impl SelfValidating for InstantiateMsg {
             .map_err(|e| ContractError::ValidationError {
                 message: format!("trading marker: {e:?}"),
             })?;
+        if self
+            .required_deposit_attributes
+            .iter()
+            .any(|attr| attr.is_empty())
+        {
+            return ContractError::ValidationError {
+                message: "all required deposit attributes must be non-empty values".to_string(),
+            }
+            .to_err();
+        }
+        if self
+            .required_withdraw_attributes
+            .iter()
+            .any(|attr| attr.is_empty())
+        {
+            return ContractError::ValidationError {
+                message: "all required withdraw attributes must be non-empty values".to_string(),
+            }
+            .to_err();
+        }
         ().to_ok()
     }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-pub enum ExecuteMsg {}
+pub enum ExecuteMsg {
+    FundTrading {},
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub enum QueryMsg {}

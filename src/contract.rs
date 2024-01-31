@@ -1,6 +1,7 @@
 use crate::instantiate::instantiate_contract::instantiate_contract;
+use crate::migrate::migrate_contract::migrate_contract;
 use crate::types::error::ContractError;
-use crate::types::msg::InstantiateMsg;
+use crate::types::msg::{InstantiateMsg, MigrateMsg};
 use cosmwasm_std::{entry_point, Binary, Deps, DepsMut, Env, MessageInfo, Response};
 use result_extensions::ResultExtensions;
 
@@ -38,13 +39,8 @@ pub fn query(
     .to_err()
 }
 
-pub fn migrate(
-    deps: DepsMut,
-    env: Env,
-    msg: String, // Todo: Message
-) -> Result<Response, ContractError> {
-    ContractError::UnimplementedError {
-        message: "you should be miGRATEFUL that you can even instantiate this contract".to_string(),
+pub fn migrate(deps: DepsMut, _env: Env, msg: MigrateMsg) -> Result<Response, ContractError> {
+    match msg {
+        MigrateMsg::ContractUpgrade {} => migrate_contract(deps),
     }
-    .to_err()
 }

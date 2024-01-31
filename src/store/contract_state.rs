@@ -19,6 +19,8 @@ pub struct ContractStateV1 {
     pub contract_version: String,
     pub deposit_marker: Denom,
     pub trading_marker: Denom,
+    pub required_deposit_attributes: Vec<String>,
+    pub required_withdraw_attributes: Vec<String>,
 }
 impl ContractStateV1 {
     pub fn new<S: Into<String>>(
@@ -26,6 +28,8 @@ impl ContractStateV1 {
         contract_name: S,
         deposit_marker: &Denom,
         trading_marker: &Denom,
+        required_deposit_attributes: &[String],
+        required_withdraw_attributes: &[String],
     ) -> Self {
         Self {
             admin,
@@ -34,6 +38,8 @@ impl ContractStateV1 {
             contract_version: CONTRACT_VERSION.to_string(),
             deposit_marker: Denom::new(&deposit_marker.name, deposit_marker.precision.u64()),
             trading_marker: Denom::new(&trading_marker.name, trading_marker.precision.u64()),
+            required_deposit_attributes: required_deposit_attributes.to_vec(),
+            required_withdraw_attributes: required_withdraw_attributes.to_vec(),
         }
     }
 }
