@@ -1,6 +1,6 @@
 use crate::types::denom::Denom;
 use crate::types::error::ContractError;
-use cosmwasm_std::{Addr, Storage, Uint64};
+use cosmwasm_std::{Addr, Storage};
 use cw_storage_plus::Item;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};

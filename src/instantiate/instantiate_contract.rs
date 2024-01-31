@@ -3,7 +3,7 @@ use crate::types::error::ContractError;
 use crate::types::msg::InstantiateMsg;
 use crate::util::self_validating::SelfValidating;
 use crate::util::validation_utils::check_funds_are_empty;
-use cosmwasm_std::{DepsMut, Env, MessageInfo, Response};
+use cosmwasm_std::{DepsMut, MessageInfo, Response};
 use result_extensions::ResultExtensions;
 
 pub fn instantiate_contract(

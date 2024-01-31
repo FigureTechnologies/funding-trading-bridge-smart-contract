@@ -12,15 +12,13 @@ pub struct Denom {
 }
 impl SelfValidating for Denom {
     fn self_validate(&self) -> Result<(), ContractError> {
-        let error_msg = if self.name.is_empty() {
-            "denom name cannot be empty"
-        } else if self.precision.u64() < 0 {
-            "denom precision cannot be less than zero"
-        } else {
-            return ().to_ok();
+        if self.name.is_empty() {
+            return ContractError::ValidationError {
+                message: "name cannot be empty".to_string(),
+            }
+            .to_err();
         }
-        .to_string();
-        ContractError::ValidationError { message: error_msg }.to_err()
+        ().to_ok()
     }
 }
 impl Denom {
@@ -30,4 +28,11 @@ impl Denom {
             precision: Uint64::new(precision),
         }
     }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct DenomConversion {
+    pub source_amount: u128,
+    pub target_amount: u128,
+    pub remainder: u128,
 }
