@@ -1,6 +1,7 @@
 use crate::types::denom::Denom;
 use crate::types::error::ContractError;
 use crate::util::self_validating::SelfValidating;
+use cosmwasm_std::Uint128;
 use result_extensions::ResultExtensions;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -57,7 +58,7 @@ impl SelfValidating for InstantiateMsg {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub enum ExecuteMsg {
-    FundTrading {},
+    FundTrading { deposit_amount: Uint128 },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]

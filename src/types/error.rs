@@ -1,4 +1,5 @@
 use cosmwasm_std::StdError;
+use std::num::ParseIntError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -9,11 +10,17 @@ pub enum ContractError {
     #[error("instantiation error occurred: {message}")]
     InstantiationError { message: String },
 
+    #[error("invalid account: {message}")]
+    InvalidAccountError { message: String },
+
     #[error("invalid funds: {message}")]
     InvalidFundsError { message: String },
 
     #[error("migration error occurred: {message}")]
     MigrationError { message: String },
+
+    #[error("{0}")]
+    ParseIntError(#[from] ParseIntError),
 
     #[error("{0}")]
     SemVerError(#[from] semver::Error),

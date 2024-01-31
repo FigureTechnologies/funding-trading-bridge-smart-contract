@@ -6,6 +6,7 @@ use crate::util::validation_utils::check_funds_are_empty;
 use cosmwasm_std::{DepsMut, MessageInfo, Response};
 use result_extensions::ResultExtensions;
 
+// TODO: Validate that both deposit / trading denoms are tied to restricted markers (and that they exist at all lol)
 pub fn instantiate_contract(
     deps: DepsMut,
     info: MessageInfo,

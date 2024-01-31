@@ -1,7 +1,8 @@
+use crate::execute::fund_trading::fund_trading;
 use crate::instantiate::instantiate_contract::instantiate_contract;
 use crate::migrate::migrate_contract::migrate_contract;
 use crate::types::error::ContractError;
-use crate::types::msg::{InstantiateMsg, MigrateMsg};
+use crate::types::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg};
 use cosmwasm_std::{entry_point, Binary, Deps, DepsMut, Env, MessageInfo, Response};
 use result_extensions::ResultExtensions;
 
@@ -20,12 +21,13 @@ pub fn execute(
     deps: DepsMut,
     env: Env,
     info: MessageInfo,
-    msg: String, // Todo: Message
+    msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
-    ContractError::UnimplementedError {
-        message: "one cannot simply execute into Mordor".to_string(),
+    match msg {
+        ExecuteMsg::FundTrading { deposit_amount } => {
+            fund_trading(deps, env, info, deposit_amount.u128())
+        }
     }
-    .to_err()
 }
 
 pub fn query(
