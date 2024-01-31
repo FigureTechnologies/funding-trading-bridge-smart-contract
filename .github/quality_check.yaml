@@ -1,0 +1,35 @@
+name: Quality Check
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality_check:
+    name: Quality Check
+    runs-on: [ self-hosted, linux ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          components: clippy, rustfmt
+
+      - name: Check Code Formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+      - name: Check Clippy Recommendations
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+
+      - name: Run Contract Tests
+        run: make test

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExecuteMsg",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "FundTrading"
+      ],
+      "properties": {
+        "FundTrading": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "WithdrawTrading"
+      ],
+      "properties": {
+        "WithdrawTrading": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

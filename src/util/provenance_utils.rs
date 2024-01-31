@@ -1,6 +1,5 @@
 use crate::types::error::ContractError;
-use cosmwasm_std::{DepsMut, Uint128};
-use provwasm_std::types::cosmos::bank::v1beta1::BankQuerier;
+use cosmwasm_std::DepsMut;
 use provwasm_std::types::cosmos::base::query::v1beta1::PageRequest;
 use provwasm_std::types::provenance::attribute::v1::AttributeQuerier;
 use result_extensions::ResultExtensions;
@@ -50,34 +49,4 @@ pub fn check_account_has_all_attributes<S: Into<String>>(
         }
     }
     ().to_ok()
-}
-
-pub fn check_account_has_enough_denom<S1: Into<String>, S2: Into<String>>(
-    deps: &DepsMut,
-    account: S1,
-    denom: S2,
-    required_amount: u128,
-) -> Result<(), ContractError> {
-    let querier = BankQuerier::new(&deps.querier);
-    let account_address = account.into();
-    let target_denom = denom.into();
-    let balance_response = querier.balance(account_address.to_owned(), target_denom.to_owned())?;
-    if let Some(coin) = balance_response.balance {
-        let numeric_balance = coin.amount.parse::<u128>()?;
-        if numeric_balance < required_amount {
-            ContractError::InvalidAccountError {
-                message: format!(
-                    "required [{required_amount}], but account only holds [{numeric_balance}]"
-                ),
-            }
-            .to_err()
-        } else {
-            ().to_ok()
-        }
-    } else {
-        ContractError::InvalidFundsError {
-            message: format!("account [{account_address}] has no [{target_denom}] balance"),
-        }
-        .to_err()
-    }
 }

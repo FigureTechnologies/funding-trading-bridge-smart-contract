@@ -1,7 +1,6 @@
 use crate::types::denom::Denom;
 use crate::types::error::ContractError;
 use crate::util::self_validating::SelfValidating;
-use cosmwasm_std::Uint128;
 use result_extensions::ResultExtensions;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -58,12 +57,38 @@ impl SelfValidating for InstantiateMsg {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub enum ExecuteMsg {
-    FundTrading { deposit_amount: Uint128 },
+    FundTrading {},
+    WithdrawTrading {},
+}
+impl SelfValidating for ExecuteMsg {
+    fn self_validate(&self) -> Result<(), ContractError> {
+        match self {
+            ExecuteMsg::FundTrading {} => ().to_ok(),
+            ExecuteMsg::WithdrawTrading {} => ().to_ok(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-pub enum QueryMsg {}
+pub enum QueryMsg {
+    QueryContractState {},
+}
+impl SelfValidating for QueryMsg {
+    fn self_validate(&self) -> Result<(), ContractError> {
+        match self {
+            QueryMsg::QueryContractState {} => ().to_ok(),
+        }
+    }
+}
 
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub enum MigrateMsg {
     ContractUpgrade {},
+}
+impl SelfValidating for MigrateMsg {
+    fn self_validate(&self) -> Result<(), ContractError> {
+        match self {
+            MigrateMsg::ContractUpgrade {} => ().to_ok(),
+        }
+    }
 }
