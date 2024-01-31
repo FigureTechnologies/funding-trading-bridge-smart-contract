@@ -1,0 +1,10 @@
+# ide
+/.vscode/
+/.idea/
+/.run/
+*.iml
+
+# build artifacts
+artifacts
+target
+schema

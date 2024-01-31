@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  contract-release:
+    name: Contract File Release
+    runs-on: [ self-hosted, linux ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate Latest Schema Files
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --example schema
+
+      - name: Optimize Contract
+        run: make optimize
+
+      - name: Release Contract Files
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            artifacts/funding_trading_bridge_smart_contract.wasm
+            artifacts/checksums.txt
+            schema/*.json
