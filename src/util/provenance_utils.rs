@@ -13,10 +13,7 @@ pub fn msg_bind_name<S1: Into<String>, S2: Into<String>>(
     restricted: bool,
 ) -> Result<MsgBindNameRequest, ContractError> {
     let fully_qualified_name = name.into();
-    let mut name_parts = fully_qualified_name
-        .to_owned()
-        .split(".")
-        .collect::<Vec<&str>>();
+    let mut name_parts = fully_qualified_name.split(".").collect::<Vec<&str>>();
     let bind_record = if let Some(bind) = name_parts.to_owned().first() {
         if bind.is_empty() {
             return ContractError::InvalidFormatError {

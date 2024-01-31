@@ -53,7 +53,7 @@ impl SelfValidating for InstantiateMsg {
             }
             .to_err();
         }
-        if let Some(name) = self.name_to_bind.to_owned() {
+        if let Some(name) = &self.name_to_bind {
             if name.is_empty() {
                 return ContractError::ValidationError {
                     message: "contract name cannot be specified as empty string".to_string(),

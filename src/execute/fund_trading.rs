@@ -74,7 +74,7 @@ pub fn fund_trading(
         to_address: info.sender.to_string(),
         amount: vec![minted_coin.to_owned()],
     };
-    let mut response = Response::new()
+    Response::new()
         .add_message(transfer_msg)
         .add_message(mint_msg)
         .add_message(withdraw_msg)
@@ -86,6 +86,6 @@ pub fn fund_trading(
         .add_attribute("deposit_requested_amount", trade_amount.to_string())
         .add_attribute("deposit_actual_amount", transferred_amount.to_string())
         .add_attribute("received_denom", minted_coin.denom)
-        .add_attribute("received_amount", minted_coin.amount);
-    response.to_ok()
+        .add_attribute("received_amount", minted_coin.amount)
+        .to_ok()
 }

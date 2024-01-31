@@ -9,8 +9,8 @@ use result_extensions::ResultExtensions;
 // TODO: Validate that both deposit / trading denoms are tied to restricted markers (and that they exist at all lol)
 pub fn instantiate_contract(
     deps: DepsMut,
-    info: MessageInfo,
     env: Env,
+    info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
     check_funds_are_empty(&info)?;
