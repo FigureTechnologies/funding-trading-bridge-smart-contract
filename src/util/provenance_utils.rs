@@ -22,30 +22,31 @@ pub fn check_account_has_all_attributes<S: Into<String>>(
                 remaining_attributes.retain(|name| name != &attr.name);
             }
         }
-        if !remaining_attributes.is_empty()
-            && latest_response.pagination.is_some()
-            && !latest_response
-                .pagination
-                .clone()
-                .unwrap()
-                .next_key
-                .is_empty()
-        {
-            latest_response = querier.attributes(
-                account_addr.to_owned(),
-                Some(PageRequest {
-                    key: latest_response.pagination.unwrap().next_key.to_owned(),
-                    offset: 0,
-                    limit: 25,
-                    count_total: false,
-                    reverse: false,
-                }),
-            )?;
-        } else {
-            return ContractError::InvalidAccountError {
-                message: "account does not have all required attributes".to_string(),
+        if !remaining_attributes.is_empty() {
+            if latest_response.pagination.is_some()
+                && !latest_response
+                    .pagination
+                    .clone()
+                    .unwrap()
+                    .next_key
+                    .is_empty()
+            {
+                latest_response = querier.attributes(
+                    account_addr.to_owned(),
+                    Some(PageRequest {
+                        key: latest_response.pagination.unwrap().next_key.to_owned(),
+                        offset: 0,
+                        limit: 25,
+                        count_total: false,
+                        reverse: false,
+                    }),
+                )?;
+            } else {
+                return ContractError::InvalidAccountError {
+                    message: "account does not have all required attributes".to_string(),
+                }
+                .to_err();
             }
-            .to_err();
         }
     }
     ().to_ok()
