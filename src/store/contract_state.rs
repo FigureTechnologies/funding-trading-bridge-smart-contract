@@ -65,5 +65,73 @@ pub fn get_contract_state_v1(storage: &dyn Storage) -> Result<ContractStateV1, C
 
 #[cfg(test)]
 mod tests {
-    // TODO: Testing if time allows
+    use crate::store::contract_state::{ContractStateV1, CONTRACT_TYPE, CONTRACT_VERSION};
+    use crate::types::denom::Denom;
+    use cosmwasm_std::{Addr, Uint64};
+    use schemars::_serde_json::to_string;
+
+    #[test]
+    fn test_new_contract_state_v1() {
+        let state = ContractStateV1::new(
+            Addr::unchecked("admin"),
+            "contract_name",
+            &Denom {
+                name: "deposit".to_string(),
+                precision: Uint64::new(10),
+            },
+            &Denom {
+                name: "trading".to_string(),
+                precision: Uint64::new(4),
+            },
+            &vec!["required".to_string()],
+            &vec!["required".to_string()],
+        );
+        assert_eq!(
+            "admin",
+            state.admin.as_str(),
+            "the admin value should be set correctly",
+        );
+        assert_eq!(
+            "contract_name", state.contract_name,
+            "the contract name value should be set correctly",
+        );
+        assert_eq!(
+            CONTRACT_TYPE, state.contract_type,
+            "the contract type value should be set correctly",
+        );
+        assert_eq!(
+            CONTRACT_VERSION.to_string(),
+            state.contract_version,
+            "the contract version value should be set correctly",
+        );
+        assert_eq!(
+            "deposit", state.deposit_marker.name,
+            "the deposit marker name should be set correctly",
+        );
+        assert_eq!(
+            10,
+            state.deposit_marker.precision.u64(),
+            "the deposit marker precision should be set correctly",
+        );
+        assert_eq!(
+            "trading", state.trading_marker.name,
+            "the trading marker name should be set correctly",
+        );
+        assert_eq!(
+            4,
+            state.trading_marker.precision.u64(),
+            "the trading marker precision should be set correctly",
+        );
+        assert_eq!(
+            vec!["required"],
+            state.required_deposit_attributes,
+            "the required deposit attributes should have the proper value",
+        );
+        assert_eq!(
+            vec!["required".to_string()],
+            state.required_withdraw_attributes,
+            "the required withdraw attributes should have the proper value",
+        );
+        println!("Serialized: {}", to_string(&state).unwrap());
+    }
 }
