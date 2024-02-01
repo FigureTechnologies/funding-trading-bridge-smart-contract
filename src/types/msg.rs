@@ -66,6 +66,7 @@ impl SelfValidating for InstantiateMsg {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
     FundTrading { trade_amount: Uint128 },
     WithdrawTrading { trade_amount: Uint128 },
@@ -95,6 +96,7 @@ impl SelfValidating for ExecuteMsg {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     QueryContractState {},
 }
@@ -107,6 +109,7 @@ impl SelfValidating for QueryMsg {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum MigrateMsg {
     ContractUpgrade {},
 }
