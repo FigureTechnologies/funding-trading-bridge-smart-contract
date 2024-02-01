@@ -45,6 +45,9 @@ pub fn msg_bind_name<S1: Into<String>, S2: Into<String>>(
         let parent_name = name_parts.join(".").to_string();
         Some(NameRecord {
             name: parent_name.to_owned(),
+            // The parent record must also use the address being bound to as its address in order for
+            // the bind to succeed.  This is the only way in which Provenance accepts a non-restricted
+            // name bind
             address: bind_address,
             restricted: false,
         })
