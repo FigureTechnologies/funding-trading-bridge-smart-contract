@@ -1,6 +1,7 @@
 use crate::types::denom::Denom;
 use crate::types::error::ContractError;
 use crate::util::self_validating::SelfValidating;
+use cosmwasm_std::Uint128;
 use result_extensions::ResultExtensions;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -12,6 +13,7 @@ pub struct InstantiateMsg {
     pub trading_marker: Denom,
     pub required_deposit_attributes: Vec<String>,
     pub required_withdraw_attributes: Vec<String>,
+    pub name_to_bind: Option<String>,
 }
 impl SelfValidating for InstantiateMsg {
     fn self_validate(&self) -> Result<(), ContractError> {
@@ -51,21 +53,44 @@ impl SelfValidating for InstantiateMsg {
             }
             .to_err();
         }
+        if let Some(name) = &self.name_to_bind {
+            if name.is_empty() {
+                return ContractError::ValidationError {
+                    message: "contract name cannot be specified as empty string".to_string(),
+                }
+                .to_err();
+            }
+        }
         ().to_ok()
     }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub enum ExecuteMsg {
-    FundTrading {},
-    WithdrawTrading {},
+    FundTrading { trade_amount: Uint128 },
+    WithdrawTrading { trade_amount: Uint128 },
 }
 impl SelfValidating for ExecuteMsg {
     fn self_validate(&self) -> Result<(), ContractError> {
         match self {
-            ExecuteMsg::FundTrading {} => ().to_ok(),
-            ExecuteMsg::WithdrawTrading {} => ().to_ok(),
+            ExecuteMsg::FundTrading { trade_amount } => {
+                if trade_amount.u128() == 0 {
+                    return ContractError::ValidationError {
+                        message: "trade amount must be greater than zero".to_string(),
+                    }
+                    .to_err();
+                }
+            }
+            ExecuteMsg::WithdrawTrading { trade_amount } => {
+                if trade_amount.u128() == 0 {
+                    return ContractError::ValidationError {
+                        message: "trade amount must be greater than zero".to_string(),
+                    }
+                    .to_err();
+                }
+            }
         }
+        ().to_ok()
     }
 }
 

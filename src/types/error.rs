@@ -13,11 +13,17 @@ pub enum ContractError {
     #[error("invalid account: {message}")]
     InvalidAccountError { message: String },
 
+    #[error("invalid format: {message}")]
+    InvalidFormatError { message: String },
+
     #[error("invalid funds: {message}")]
     InvalidFundsError { message: String },
 
     #[error("migration error occurred: {message}")]
     MigrationError { message: String },
+
+    #[error("not found: {message}")]
+    NotFoundError { message: String },
 
     #[error("{0}")]
     ParseIntError(#[from] ParseIntError),
