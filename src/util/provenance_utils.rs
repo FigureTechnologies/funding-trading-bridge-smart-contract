@@ -13,7 +13,7 @@ pub fn msg_bind_name<S1: Into<String>, S2: Into<String>>(
     restricted: bool,
 ) -> Result<MsgBindNameRequest, ContractError> {
     let fully_qualified_name = name.into();
-    let mut name_parts = fully_qualified_name.split(".").collect::<Vec<&str>>();
+    let mut name_parts = fully_qualified_name.split('.').collect::<Vec<&str>>();
     let bind_record = if let Some(bind) = name_parts.to_owned().first() {
         if bind.is_empty() {
             return ContractError::InvalidFormatError {
@@ -167,5 +167,44 @@ pub fn get_marker_address_for_denom<S: Into<String>>(
             message: format!("unable to query marker by name [{}]", &marker_denom),
         }
         .to_err()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::util::provenance_utils::msg_bind_name;
+
+    #[test]
+    fn msg_bind_name_creates_proper_binding_with_fully_qualified_name() {
+        let name = "test.name.bro";
+        let address = "some-address";
+        let msg =
+            msg_bind_name(name, address, true).expect("valid input should not yield an error");
+        let parent = msg.parent.expect("the result should include a parent msg");
+        assert_eq!(
+            "name.bro", parent.name,
+            "parent name should be properly derived",
+        );
+        assert_eq!(
+            "", parent.address,
+            "parent address value should never be set",
+        );
+        assert!(
+            !parent.restricted,
+            "parent restricted should always be false",
+        );
+        let bind = msg.record.expect("the result should include a name record");
+        assert_eq!(
+            "test", bind.name,
+            "the bound name should be properly derived",
+        );
+        assert_eq!(
+            address, bind.address,
+            "the bound name should have the specified address",
+        );
+        assert!(
+            bind.restricted,
+            "the restricted value should equate to the value specified",
+        );
     }
 }
