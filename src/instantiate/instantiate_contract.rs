@@ -39,12 +39,11 @@ pub fn instantiate_contract(
 mod tests {
     use crate::instantiate::instantiate_contract::instantiate_contract;
     use crate::test::attribute_extractor::AttributeExtractor;
-    use crate::types::denom::Denom;
     use crate::types::error::ContractError;
     use crate::types::msg::InstantiateMsg;
     use crate::util::provenance_utils::msg_bind_name;
     use cosmwasm_std::testing::{mock_env, mock_info, MOCK_CONTRACT_ADDR};
-    use cosmwasm_std::{coins, CosmosMsg, Uint64};
+    use cosmwasm_std::{coins, CosmosMsg};
     use provwasm_mocks::mock_provenance_dependencies;
     use provwasm_std::types::provenance::name::v1::MsgBindNameRequest;
 
@@ -55,7 +54,7 @@ mod tests {
             deps.as_mut(),
             mock_env(),
             mock_info("test-sender", &coins(10, "nhash")),
-            default_instantiate(),
+            InstantiateMsg::default(),
         )
         .expect_err("an error should occur when providing funds");
         let _expected_err_msg = "funds provided but empty funds required".to_string();
@@ -73,7 +72,10 @@ mod tests {
     #[test]
     fn test_successful_instantiate_without_name_bind() {
         let mut deps = mock_provenance_dependencies();
-        let instantiate_msg = default_instantiate();
+        let instantiate_msg = InstantiateMsg {
+            name_to_bind: None,
+            ..InstantiateMsg::default()
+        };
         let response = instantiate_contract(
             deps.as_mut(),
             mock_env(),
@@ -99,7 +101,10 @@ mod tests {
     #[test]
     fn test_successful_instantiate_with_name_bind() {
         let mut deps = mock_provenance_dependencies();
-        let mut instantiate_msg = default_instantiate();
+        let mut instantiate_msg = InstantiateMsg {
+            name_to_bind: Some("name".to_string()),
+            ..InstantiateMsg::default()
+        };
         instantiate_msg.name_to_bind = Some("name".to_string());
         let response = instantiate_contract(
             deps.as_mut(),
@@ -114,7 +119,6 @@ mod tests {
             "expected a single message to be emitted when a name is bound",
         );
         let message = response.messages.first().unwrap();
-        println!("{message:?}");
         match &message.msg {
             CosmosMsg::Stargate { type_url: _, value } => {
                 let expected_name_bind = msg_bind_name("name", MOCK_CONTRACT_ADDR, true)
@@ -138,22 +142,5 @@ mod tests {
         response.assert_attribute("deposit_marker_name", instantiate_msg.deposit_marker.name);
         response.assert_attribute("trading_marker_name", instantiate_msg.trading_marker.name);
         response.assert_attribute("contract_bound_with_name", "name");
-    }
-
-    fn default_instantiate() -> InstantiateMsg {
-        InstantiateMsg {
-            contract_name: "test-contract".to_string(),
-            deposit_marker: Denom {
-                name: "deposit".to_string(),
-                precision: Uint64::new(2),
-            },
-            trading_marker: Denom {
-                name: "trading".to_string(),
-                precision: Uint64::new(6),
-            },
-            required_deposit_attributes: vec![],
-            required_withdraw_attributes: vec![],
-            name_to_bind: None,
-        }
     }
 }
