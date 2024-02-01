@@ -30,12 +30,7 @@ pub fn instantiate_contract(
         .add_attribute("trading_marker_name", &msg.trading_marker.name);
     if let Some(name) = msg.name_to_bind {
         response = response
-            .add_message(msg_bind_name(
-                &deps.as_ref(),
-                &name,
-                env.contract.address,
-                true,
-            )?)
+            .add_message(msg_bind_name(&name, env.contract.address, true)?)
             .add_attribute("contract_bound_with_name", name)
     }
     response.to_ok()
