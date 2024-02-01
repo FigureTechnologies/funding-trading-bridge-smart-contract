@@ -11,12 +11,12 @@ use cosmwasm_std::{entry_point, Binary, Deps, DepsMut, Env, MessageInfo, Respons
 #[entry_point]
 pub fn instantiate(
     deps: DepsMut,
-    _env: Env,
+    env: Env,
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
     msg.self_validate()?;
-    instantiate_contract(deps, info, msg)
+    instantiate_contract(deps, env, info, msg)
 }
 
 #[entry_point]
@@ -28,8 +28,12 @@ pub fn execute(
 ) -> Result<Response, ContractError> {
     msg.self_validate()?;
     match msg {
-        ExecuteMsg::FundTrading {} => fund_trading(deps, env, info),
-        ExecuteMsg::WithdrawTrading {} => withdraw_trading(deps, env, info),
+        ExecuteMsg::FundTrading { trade_amount } => {
+            fund_trading(deps, env, info, trade_amount.u128())
+        }
+        ExecuteMsg::WithdrawTrading { trade_amount } => {
+            withdraw_trading(deps, env, info, trade_amount.u128())
+        }
     }
 }
 
