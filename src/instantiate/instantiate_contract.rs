@@ -20,7 +20,7 @@ pub fn instantiate_contract(
         &msg.deposit_marker,
         &msg.trading_marker,
         &msg.required_deposit_attributes,
-        &msg.required_deposit_attributes,
+        &msg.required_withdraw_attributes,
     );
     set_contract_state_v1(deps.storage, &contract_state)?;
     let mut response = Response::new()
