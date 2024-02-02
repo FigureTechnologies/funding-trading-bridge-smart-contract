@@ -5,11 +5,10 @@ use cosmwasm_std::testing::{mock_env, mock_info};
 use cosmwasm_std::DepsMut;
 
 pub fn test_instantiate(deps: DepsMut) {
-    instantiate_contract(
-        deps,
-        mock_env(),
-        mock_info(DEFAULT_ADMIN, &[]),
-        InstantiateMsg::default(),
-    )
-    .expect("expected default instantiation to succeed");
+    test_instantiate_with_msg(deps, InstantiateMsg::default());
+}
+
+pub fn test_instantiate_with_msg(deps: DepsMut, msg: InstantiateMsg) {
+    instantiate_contract(deps, mock_env(), mock_info(DEFAULT_ADMIN, &[]), msg)
+        .expect("expected default instantiation to succeed");
 }

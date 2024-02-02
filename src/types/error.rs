@@ -39,7 +39,4 @@ pub enum ContractError {
 
     #[error("validation failed: {message}")]
     ValidationError { message: String },
-
-    #[error("unimplemented: {message}")]
-    UnimplementedError { message: String },
 }
