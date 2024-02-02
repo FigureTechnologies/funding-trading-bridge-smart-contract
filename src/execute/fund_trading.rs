@@ -162,7 +162,7 @@ mod tests {
         let error = fund_trading(deps.as_mut(), mock_env(), mock_info("some-sender", &[]), 11)
             .expect_err("an error should occur when the sender tries to trade more funds than are available to them");
         assert!(
-            matches!(error, ContractError::InvalidAccountError { .. },),
+            matches!(error, ContractError::InvalidAccountError { .. }),
             "unexpected error type encountered when the sender tries to trade too much: {error:?}",
         );
     }
@@ -256,7 +256,7 @@ mod tests {
             &mut querier,
             QueryBalanceResponse {
                 balance: Some(Coin {
-                    amount: "10".to_string(),
+                    amount: "103".to_string(),
                     denom: DEFAULT_DEPOSIT_DENOM_NAME.to_string(),
                 }),
             },
@@ -275,15 +275,20 @@ mod tests {
             },
         );
         let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
+        // Setup the trading marker to have a smaller precision than the deposit, requiring some
+        // remainder to be returned.  Ex:
+        // Sender wants to send 103, which equates to 1.03.  However, trading marker has a precision
+        // of 1, which will convert to 10 (aka 1.0).  The 3 will be dropped and be a remaining value
+        // for the sender
         test_instantiate_with_msg(
             deps.as_mut(),
             InstantiateMsg {
-                deposit_marker: Denom::new(DEFAULT_DEPOSIT_DENOM_NAME, 1),
-                trading_marker: Denom::new(DEFAULT_TRADING_DENOM_NAME, 2),
+                deposit_marker: Denom::new(DEFAULT_DEPOSIT_DENOM_NAME, 2),
+                trading_marker: Denom::new(DEFAULT_TRADING_DENOM_NAME, 1),
                 ..InstantiateMsg::default()
             },
         );
-        let response = fund_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 10)
+        let response = fund_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 103)
             .expect("proper circumstances should derive a successful result");
         assert_eq!(
             3,
@@ -302,7 +307,7 @@ mod tests {
                     );
                     let coin = req.amount.expect("expected the amount to be set on the transfer request");
                     assert_eq!(
-                        10.to_string(),
+                        100.to_string(),
                         coin.amount,
                         "the correct amount of funds should be taken from the sender",
                     );
@@ -332,7 +337,7 @@ mod tests {
                     );
                     let coin = req.amount.expect("expected the amount to be set on the mint request");
                     assert_eq!(
-                        100.to_string(),
+                        10.to_string(),
                         coin.amount,
                         "the amount minted should equate to the amount after the precision conversion",
                     );
@@ -367,7 +372,7 @@ mod tests {
                     );
                     let coin = req.amount.first().unwrap();
                     assert_eq!(
-                        100.to_string(),
+                        10.to_string(),
                         coin.amount,
                         "the withdrawn amount should be the upconverted denom",
                     );
@@ -391,9 +396,9 @@ mod tests {
         response.assert_attribute("contract_type", CONTRACT_TYPE);
         response.assert_attribute("contract_name", DEFAULT_CONTRACT_NAME);
         response.assert_attribute("deposit_input_denom", DEFAULT_DEPOSIT_DENOM_NAME);
-        response.assert_attribute("deposit_requested_amount", "10");
-        response.assert_attribute("deposit_actual_amount", "10");
+        response.assert_attribute("deposit_requested_amount", "103");
+        response.assert_attribute("deposit_actual_amount", "100");
         response.assert_attribute("received_denom", DEFAULT_TRADING_DENOM_NAME);
-        response.assert_attribute("received_amount", "100");
+        response.assert_attribute("received_amount", "10");
     }
 }

@@ -140,7 +140,7 @@ pub fn check_account_has_enough_denom<S1: Into<String>, S2: Into<String>>(
 }
 
 pub fn get_marker_address_for_denom<S: Into<String>>(
-    deps: &DepsMut,
+    deps: &Deps,
     denom: S,
 ) -> Result<String, ContractError> {
     let marker_denom = denom.into();
@@ -177,14 +177,21 @@ pub fn get_marker_address_for_denom<S: Into<String>>(
 mod tests {
     use crate::types::error::ContractError;
     use crate::util::provenance_utils::{
-        check_account_has_all_attributes, check_account_has_enough_denom, msg_bind_name,
+        check_account_has_all_attributes, check_account_has_enough_denom,
+        get_marker_address_for_denom, msg_bind_name,
     };
+    use prost::Message;
     use provwasm_mocks::{mock_provenance_dependencies_with_custom_querier, MockProvenanceQuerier};
+    use provwasm_std::shim::Any;
+    use provwasm_std::types::cosmos::auth::v1beta1::BaseAccount;
     use provwasm_std::types::cosmos::bank::v1beta1::{QueryBalanceRequest, QueryBalanceResponse};
     use provwasm_std::types::cosmos::base::query::v1beta1::PageResponse;
     use provwasm_std::types::cosmos::base::v1beta1::Coin;
     use provwasm_std::types::provenance::attribute::v1::{
         Attribute, AttributeType, QueryAttributesRequest, QueryAttributesResponse,
+    };
+    use provwasm_std::types::provenance::marker::v1::{
+        MarkerAccount, MarkerStatus, MarkerType, QueryMarkerRequest, QueryMarkerResponse,
     };
 
     #[test]
@@ -395,6 +402,111 @@ mod tests {
                 },
             ),
             "unexpected error message emitted when no balance found",
+        );
+    }
+
+    #[test]
+    fn get_marker_address_for_denom_guards_against_missing_marker() {
+        let mut querier = MockProvenanceQuerier::new(&[]);
+        QueryMarkerRequest::mock_response(&mut querier, QueryMarkerResponse { marker: None });
+        let deps = mock_provenance_dependencies_with_custom_querier(querier);
+        let error = get_marker_address_for_denom(&deps.as_ref(), "marker")
+            .expect_err("an error should occur when the marker is not found");
+        let _expected_message = "unable to query marker by name [marker]".to_string();
+        assert!(
+            matches!(
+                error,
+                ContractError::NotFoundError {
+                    message: _expected_message
+                },
+            ),
+            "unexpected error message emitted when marker missing",
+        );
+    }
+
+    #[test]
+    fn get_marker_address_for_denom_guards_against_incorrect_marker_account_type() {
+        // TODO: Test circumstance where marker account is malformed.  Provwasm 2.0.0 does not
+        // allow for serializing anything except MarkerAccount to Any, so it cannot be tested
+    }
+
+    #[test]
+    fn get_marker_address_for_denom_guards_against_missing_base_account() {
+        let mut querier = MockProvenanceQuerier::new(&[]);
+        QueryMarkerRequest::mock_response(
+            &mut querier,
+            QueryMarkerResponse {
+                marker: Some(Any {
+                    type_url: "/provenance.marker.v1.MarkerAccount".to_string(),
+                    value: MarkerAccount {
+                        base_account: None,
+                        manager: "some-manager".to_string(),
+                        access_control: vec![],
+                        status: MarkerStatus::Active as i32,
+                        denom: "marker".to_string(),
+                        supply: "100".to_string(),
+                        marker_type: MarkerType::Restricted as i32,
+                        supply_fixed: false,
+                        allow_governance_control: false,
+                        allow_forced_transfer: false,
+                        required_attributes: vec![],
+                    }
+                    .encode_to_vec(),
+                }),
+            },
+        );
+        let deps = mock_provenance_dependencies_with_custom_querier(querier);
+        let error = get_marker_address_for_denom(&deps.as_ref(), "marker")
+            .expect_err("an error should occur when the marker is missing a base account");
+        let _expected_message =
+            "unable to resolve base account from marker account [marker]".to_string();
+        assert!(
+            matches!(
+                error,
+                ContractError::NotFoundError {
+                    message: _expected_message
+                },
+            ),
+            "unexpected error message emitted when marker account data is invalid",
+        );
+    }
+
+    #[test]
+    fn get_marker_address_for_denom_should_succeed_with_a_proper_response() {
+        let mut querier = MockProvenanceQuerier::new(&[]);
+        QueryMarkerRequest::mock_response(
+            &mut querier,
+            QueryMarkerResponse {
+                marker: Some(Any {
+                    type_url: "/provenance.marker.v1.MarkerAccount".to_string(),
+                    value: MarkerAccount {
+                        base_account: Some(BaseAccount {
+                            address: "marker-address".to_string(),
+                            pub_key: None,
+                            account_number: 312,
+                            sequence: 68,
+                        }),
+                        manager: "some-manager".to_string(),
+                        access_control: vec![],
+                        status: MarkerStatus::Active as i32,
+                        denom: "marker".to_string(),
+                        supply: "100".to_string(),
+                        marker_type: MarkerType::Restricted as i32,
+                        supply_fixed: false,
+                        allow_governance_control: false,
+                        allow_forced_transfer: false,
+                        required_attributes: vec![],
+                    }
+                    .encode_to_vec(),
+                }),
+            },
+        );
+        let deps = mock_provenance_dependencies_with_custom_querier(querier);
+        let marker_address = get_marker_address_for_denom(&deps.as_ref(), "marker")
+            .expect("a response should be emitted when marker output is properly formed");
+        assert_eq!(
+            "marker-address", marker_address,
+            "the correct marker address should be extracted",
         );
     }
 }
