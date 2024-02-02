@@ -93,8 +93,11 @@ pub fn fund_trading(
 #[cfg(test)]
 mod tests {
     use crate::execute::fund_trading::fund_trading;
+    use crate::store::contract_state::CONTRACT_TYPE;
+    use crate::test::attribute_extractor::AttributeExtractor;
     use crate::test::test_constants::{
-        DEFAULT_DEPOSIT_DENOM_NAME, DEFAULT_REQUIRED_DEPOSIT_ATTRIBUTE, DEFAULT_TRADING_DENOM_NAME,
+        DEFAULT_CONTRACT_NAME, DEFAULT_DEPOSIT_DENOM_NAME, DEFAULT_REQUIRED_DEPOSIT_ATTRIBUTE,
+        DEFAULT_TRADING_DENOM_NAME,
     };
     use crate::test::test_instantiate::{test_instantiate, test_instantiate_with_msg};
     use crate::types::denom::Denom;
@@ -378,5 +381,19 @@ mod tests {
             },
             msg => panic!("unexpected message emitted: {msg:?}"),
         });
+        assert_eq!(
+            9,
+            response.attributes.len(),
+            "expected nine attributes to be emitted",
+        );
+        response.assert_attribute("action", "fund_trading");
+        response.assert_attribute("contract_address", MOCK_CONTRACT_ADDR);
+        response.assert_attribute("contract_type", CONTRACT_TYPE);
+        response.assert_attribute("contract_name", DEFAULT_CONTRACT_NAME);
+        response.assert_attribute("deposit_input_denom", DEFAULT_DEPOSIT_DENOM_NAME);
+        response.assert_attribute("deposit_requested_amount", "10");
+        response.assert_attribute("deposit_actual_amount", "10");
+        response.assert_attribute("received_denom", DEFAULT_TRADING_DENOM_NAME);
+        response.assert_attribute("received_amount", "100");
     }
 }
