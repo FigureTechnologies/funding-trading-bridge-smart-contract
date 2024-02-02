@@ -68,12 +68,39 @@ impl SelfValidating for InstantiateMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
+    AdminUpdateAdmin { new_admin_address: String },
+    AdminUpdateDepositRequiredAttributes { attributes: Vec<String> },
+    AdminUpdateWithdrawRequiredAttributes { attributes: Vec<String> },
     FundTrading { trade_amount: Uint128 },
     WithdrawTrading { trade_amount: Uint128 },
 }
 impl SelfValidating for ExecuteMsg {
     fn self_validate(&self) -> Result<(), ContractError> {
         match self {
+            ExecuteMsg::AdminUpdateAdmin { new_admin_address } => {
+                if new_admin_address.is_empty() {
+                    return ContractError::ValidationError {
+                        message: "new_admin_address param must be supplied".to_string(),
+                    }
+                    .to_err();
+                }
+            }
+            ExecuteMsg::AdminUpdateDepositRequiredAttributes { attributes } => {
+                if attributes.iter().any(|attr| attr.is_empty()) {
+                    return ContractError::ValidationError {
+                        message: "all specified attributes must be non-empty values".to_string(),
+                    }
+                    .to_err();
+                }
+            }
+            ExecuteMsg::AdminUpdateWithdrawRequiredAttributes { attributes } => {
+                if attributes.iter().any(|attr| attr.is_empty()) {
+                    return ContractError::ValidationError {
+                        message: "all specified attributes must be non-empty values".to_string(),
+                    }
+                    .to_err();
+                }
+            }
             ExecuteMsg::FundTrading { trade_amount } => {
                 if trade_amount.u128() == 0 {
                     return ContractError::ValidationError {
@@ -194,6 +221,65 @@ mod tests {
         InstantiateMsg::default()
             .self_validate()
             .expect("proper instantiate message values should pass validation");
+    }
+
+    #[test]
+    fn admin_update_admin_execute_message_validation_should_function_properly() {
+        assert_validation_err(
+            &ExecuteMsg::AdminUpdateAdmin {
+                new_admin_address: "".to_string(),
+            }
+            .self_validate()
+            .expect_err("expected invalid new_admin_address to fail"),
+            "new_admin_address param must be supplied",
+        );
+        ExecuteMsg::AdminUpdateAdmin {
+            new_admin_address: "some-addr".to_string(),
+        }
+        .self_validate()
+        .expect("non-empty input for new admin address should succeed");
+    }
+
+    #[test]
+    fn admin_update_deposit_required_attributes_execute_message_validation_should_function_properly(
+    ) {
+        assert_validation_err(
+            &ExecuteMsg::AdminUpdateDepositRequiredAttributes {
+                attributes: vec!["".to_string()],
+            }
+            .self_validate()
+            .expect_err("expected invalid attributes to fail"),
+            "all specified attributes must be non-empty values",
+        );
+        ExecuteMsg::AdminUpdateDepositRequiredAttributes { attributes: vec![] }
+            .self_validate()
+            .expect("empty attributes should succeed");
+        ExecuteMsg::AdminUpdateDepositRequiredAttributes {
+            attributes: vec!["some-attribute".to_string()],
+        }
+        .self_validate()
+        .expect("specified attributes should succeed");
+    }
+
+    #[test]
+    fn admin_update_withdraw_required_attributes_execute_message_validation_should_function_properly(
+    ) {
+        assert_validation_err(
+            &ExecuteMsg::AdminUpdateWithdrawRequiredAttributes {
+                attributes: vec!["".to_string()],
+            }
+            .self_validate()
+            .expect_err("expected invalid attributes to fail"),
+            "all specified attributes must be non-empty values",
+        );
+        ExecuteMsg::AdminUpdateWithdrawRequiredAttributes { attributes: vec![] }
+            .self_validate()
+            .expect("empty attributes should succeed");
+        ExecuteMsg::AdminUpdateWithdrawRequiredAttributes {
+            attributes: vec!["some-attribute".to_string()],
+        }
+        .self_validate()
+        .expect("specified attributes should succeed");
     }
 
     #[test]
