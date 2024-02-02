@@ -1,5 +1,5 @@
 use crate::types::error::ContractError;
-use cosmwasm_std::DepsMut;
+use cosmwasm_std::{Deps, DepsMut};
 use provwasm_std::types::cosmos::bank::v1beta1::BankQuerier;
 use provwasm_std::types::cosmos::base::query::v1beta1::PageRequest;
 use provwasm_std::types::provenance::attribute::v1::AttributeQuerier;
@@ -110,7 +110,7 @@ pub fn check_account_has_all_attributes<S: Into<String>>(
 }
 
 pub fn check_account_has_enough_denom<S1: Into<String>, S2: Into<String>>(
-    deps: &DepsMut,
+    deps: &Deps,
     account: S1,
     denom: S2,
     required_amount: u128,
@@ -175,7 +175,17 @@ pub fn get_marker_address_for_denom<S: Into<String>>(
 
 #[cfg(test)]
 mod tests {
-    use crate::util::provenance_utils::msg_bind_name;
+    use crate::types::error::ContractError;
+    use crate::util::provenance_utils::{
+        check_account_has_all_attributes, check_account_has_enough_denom, msg_bind_name,
+    };
+    use provwasm_mocks::{mock_provenance_dependencies_with_custom_querier, MockProvenanceQuerier};
+    use provwasm_std::types::cosmos::bank::v1beta1::{QueryBalanceRequest, QueryBalanceResponse};
+    use provwasm_std::types::cosmos::base::query::v1beta1::PageResponse;
+    use provwasm_std::types::cosmos::base::v1beta1::Coin;
+    use provwasm_std::types::provenance::attribute::v1::{
+        Attribute, AttributeType, QueryAttributesRequest, QueryAttributesResponse,
+    };
 
     #[test]
     fn msg_bind_name_creates_proper_binding_with_fully_qualified_name() {
@@ -208,6 +218,183 @@ mod tests {
         assert!(
             bind.restricted,
             "the restricted value should equate to the value specified",
+        );
+    }
+
+    #[test]
+    fn msg_bind_name_creates_proper_binding_with_single_node_name() {
+        let name = "name";
+        let address = "address";
+        let msg = msg_bind_name(name, address, false)
+            .expect("proper input should produce a success result");
+        assert!(
+            msg.parent.is_none(),
+            "the parent record should not be set because the name bind does not require it",
+        );
+        let bind = msg.record.expect("the result should include a name record");
+        assert_eq!(
+            "name", bind.name,
+            "the bound name should be properly derived",
+        );
+        assert_eq!(
+            address, bind.address,
+            "the bound name should have the specified address",
+        );
+        assert!(
+            !bind.restricted,
+            "the restricted value should equate to the value specified",
+        );
+    }
+
+    #[test]
+    fn msg_bind_name_should_properly_guard_against_bad_input() {
+        let _expected_error_message = "cannot derive bind name from input []".to_string();
+        assert!(
+            matches!(
+                msg_bind_name("", "address", true)
+                    .expect_err("an error should occur when no name is specified"),
+                ContractError::InvalidFormatError {
+                    message: _expected_error_message,
+                },
+            ),
+            "unexpected error message when specifying an empty name",
+        );
+        let _expected_error_message = "cannot bind to an empty name string [.suffix]".to_string();
+        assert!(
+            matches!(
+                msg_bind_name(".suffix", "address", true)
+                    .expect_err("an error should occur when specifying a malformed name"),
+                ContractError::InvalidFormatError {
+                    message: _expected_error_message,
+                },
+            ),
+            "unexpected error message when specifying a malformed name",
+        );
+    }
+
+    #[test]
+    fn check_account_has_all_attributes_should_succeed_when_attributes_present() {
+        let mut querier = MockProvenanceQuerier::new(&[]);
+        let account = "account".to_string();
+        QueryAttributesRequest::mock_response(
+            &mut querier,
+            QueryAttributesResponse {
+                account: account.to_owned(),
+                attributes: vec![
+                    Attribute {
+                        name: "first".to_string(),
+                        value: vec![],
+                        attribute_type: AttributeType::String as i32,
+                        address: "some-addr".to_string(),
+                    },
+                    Attribute {
+                        name: "second".to_string(),
+                        value: vec![],
+                        attribute_type: AttributeType::Json as i32,
+                        address: "other-addr".to_string(),
+                    },
+                ],
+                pagination: Some(PageResponse {
+                    next_key: vec![],
+                    total: 2,
+                }),
+            },
+        );
+        let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
+        check_account_has_all_attributes(
+            &deps.as_mut(),
+            account,
+            &["first".to_string(), "second".to_string()],
+        )
+        .expect("when all required attributes are in results, a success should occur");
+    }
+
+    #[test]
+    fn check_account_has_all_attributes_should_fail_when_attributes_missing() {
+        let mut querier = MockProvenanceQuerier::new(&[]);
+        let account = "account".to_string();
+        QueryAttributesRequest::mock_response(
+            &mut querier,
+            QueryAttributesResponse {
+                account: account.to_owned(),
+                attributes: vec![Attribute {
+                    name: "wrong_attribute".to_string(),
+                    value: vec![],
+                    attribute_type: AttributeType::String as i32,
+                    address: "some-addr".to_string(),
+                }],
+                pagination: Some(PageResponse {
+                    next_key: vec![],
+                    total: 2,
+                }),
+            },
+        );
+        let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
+        let error = check_account_has_all_attributes(
+            &deps.as_mut(),
+            account,
+            &["right_attribute".to_string()],
+        )
+        .expect_err("when one or more attributes is missing, an error should occur");
+        let _expected_error_message = "account does not have all required attributes".to_string();
+        assert!(
+            matches!(
+                error,
+                ContractError::InvalidAccountError {
+                    message: _expected_error_message,
+                },
+            ),
+            "unexpected error occurred when account missing one or more attributes",
+        );
+    }
+
+    #[test]
+    fn check_account_has_enough_denom_thresholds_work_correctly() {
+        let mut querier = MockProvenanceQuerier::new(&[]);
+        QueryBalanceRequest::mock_response(
+            &mut querier,
+            QueryBalanceResponse {
+                balance: Some(Coin {
+                    amount: "300".to_string(),
+                    denom: "denom".to_string(),
+                }),
+            },
+        );
+        let deps = mock_provenance_dependencies_with_custom_querier(querier);
+        check_account_has_enough_denom(&deps.as_ref(), "account", "denom", 300)
+            .expect("the exact amount required should cause a pass");
+        check_account_has_enough_denom(&deps.as_ref(), "account", "denom", 299)
+            .expect("having more than the amount required should cause a pass");
+        let error = check_account_has_enough_denom(&deps.as_ref(), "account", "denom", 301)
+            .expect_err("having less than the amount required should cause an error");
+        let _expected_error_message = "required [301], but account only holds [300]".to_string();
+        assert!(
+            matches!(
+                error,
+                ContractError::InvalidAccountError {
+                    message: _expected_error_message,
+                },
+            ),
+            "unexpected error message emitted when too high amount required",
+        );
+    }
+
+    #[test]
+    fn check_account_has_enough_denom_no_balance_produces_error() {
+        let mut querier = MockProvenanceQuerier::new(&[]);
+        QueryBalanceRequest::mock_response(&mut querier, QueryBalanceResponse { balance: None });
+        let deps = mock_provenance_dependencies_with_custom_querier(querier);
+        let error = check_account_has_enough_denom(&deps.as_ref(), "account", "denom", 1)
+            .expect_err("an error should occur if the response includes no balance");
+        let _expected_error_message = "account [account] has no [denom] balance".to_string();
+        assert!(
+            matches!(
+                error,
+                ContractError::InvalidFundsError {
+                    message: _expected_error_message,
+                },
+            ),
+            "unexpected error message emitted when no balance found",
         );
     }
 }

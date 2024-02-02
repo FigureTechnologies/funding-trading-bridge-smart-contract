@@ -19,7 +19,7 @@ pub fn withdraw_trading(
     check_funds_are_empty(&info)?;
     let contract_state = get_contract_state_v1(deps.storage)?;
     check_account_has_enough_denom(
-        &deps,
+        &deps.as_ref(),
         info.sender.as_str(),
         &contract_state.trading_marker.name,
         trade_amount,
