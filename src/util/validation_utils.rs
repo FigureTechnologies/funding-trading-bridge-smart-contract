@@ -1,5 +1,5 @@
 use crate::types::error::ContractError;
-use cosmwasm_std::{Coin, MessageInfo};
+use cosmwasm_std::MessageInfo;
 use result_extensions::ResultExtensions;
 
 pub fn check_funds_are_empty(info: &MessageInfo) -> Result<(), ContractError> {
@@ -13,26 +13,22 @@ pub fn check_funds_are_empty(info: &MessageInfo) -> Result<(), ContractError> {
     }
 }
 
-pub fn get_single_coin_input<S: Into<String>>(
-    info: &MessageInfo,
-    required_denom: S,
-) -> Result<Coin, ContractError> {
-    let denom = required_denom.into();
-    if info.funds.len() != 1 {
-        return ContractError::InvalidFundsError {
-            message: format!("expected only a single coin of type [{denom}] to be provided"),
-        }
-        .to_err();
+#[cfg(test)]
+mod tests {
+    use crate::util::validation_utils::check_funds_are_empty;
+    use cosmwasm_std::testing::mock_info;
+    use cosmwasm_std::{coin, coins};
+
+    #[test]
+    fn test_check_funds_are_empty_cases() {
+        check_funds_are_empty(&mock_info("sender", &[]))
+            .expect("empty funds should pass without an error");
+        check_funds_are_empty(&mock_info("sender", &coins(10, "denom")))
+            .expect_err("a single coin should produce an error");
+        check_funds_are_empty(&mock_info(
+            "sender",
+            &[coin(1, "denomA"), coin(1, "denomB")],
+        ))
+        .expect_err("multiple coins should produce an error");
     }
-    let coin = info.funds.first().unwrap();
-    if coin.denom != denom {
-        return ContractError::InvalidFundsError {
-            message: format!(
-                "expected provided coin to be of type [{denom}] but was [{}]",
-                &coin.denom,
-            ),
-        }
-        .to_err();
-    }
-    coin.to_owned().to_ok()
 }

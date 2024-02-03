@@ -1,3 +1,6 @@
+use crate::execute::admin_update_admin::admin_update_admin;
+use crate::execute::admin_update_deposit_required_attributes::admin_update_deposit_required_attributes;
+use crate::execute::admin_update_withdraw_required_attributes::admin_update_withdraw_required_attributes;
 use crate::execute::fund_trading::fund_trading;
 use crate::execute::withdraw_trading::withdraw_trading;
 use crate::instantiate::instantiate_contract::instantiate_contract;
@@ -28,6 +31,15 @@ pub fn execute(
 ) -> Result<Response, ContractError> {
     msg.self_validate()?;
     match msg {
+        ExecuteMsg::AdminUpdateAdmin { new_admin_address } => {
+            admin_update_admin(deps, env, info, new_admin_address)
+        }
+        ExecuteMsg::AdminUpdateDepositRequiredAttributes { attributes } => {
+            admin_update_deposit_required_attributes(deps, env, info, attributes)
+        }
+        ExecuteMsg::AdminUpdateWithdrawRequiredAttributes { attributes } => {
+            admin_update_withdraw_required_attributes(deps, env, info, attributes)
+        }
         ExecuteMsg::FundTrading { trade_amount } => {
             fund_trading(deps, env, info, trade_amount.u128())
         }

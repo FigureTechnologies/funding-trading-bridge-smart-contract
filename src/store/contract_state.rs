@@ -65,10 +65,13 @@ pub fn get_contract_state_v1(storage: &dyn Storage) -> Result<ContractStateV1, C
 
 #[cfg(test)]
 mod tests {
-    use crate::store::contract_state::{ContractStateV1, CONTRACT_TYPE, CONTRACT_VERSION};
+    use crate::store::contract_state::{
+        get_contract_state_v1, set_contract_state_v1, ContractStateV1, CONTRACT_TYPE,
+        CONTRACT_VERSION,
+    };
     use crate::types::denom::Denom;
     use cosmwasm_std::{Addr, Uint64};
-    use schemars::_serde_json::to_string;
+    use provwasm_mocks::mock_provenance_dependencies;
 
     #[test]
     fn test_new_contract_state_v1() {
@@ -132,6 +135,28 @@ mod tests {
             state.required_withdraw_attributes,
             "the required withdraw attributes should have the proper value",
         );
-        println!("Serialized: {}", to_string(&state).unwrap());
+    }
+
+    #[test]
+    fn test_get_set_contract_state() {
+        let mut deps = mock_provenance_dependencies();
+        get_contract_state_v1(&deps.storage)
+            .expect_err("get contract state before it has been set should cause an error");
+        let contract_state = ContractStateV1::new(
+            Addr::unchecked("admin"),
+            "contract-name",
+            &Denom::new("deposit", 10),
+            &Denom::new("trading", 4),
+            &["required_deposit".to_string()],
+            &["required_withdraw".to_string()],
+        );
+        set_contract_state_v1(&mut deps.storage, &contract_state)
+            .expect("setting contract state should succeed");
+        let from_storage_state =
+            get_contract_state_v1(&deps.storage).expect("getting contract state should succeed");
+        assert_eq!(
+            contract_state, from_storage_state,
+            "expected the state value from storage to equate to the value stored",
+        );
     }
 }

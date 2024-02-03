@@ -22,6 +22,9 @@ pub enum ContractError {
     #[error("migration error occurred: {message}")]
     MigrationError { message: String },
 
+    #[error("not authorized: {message}")]
+    NotAuthorizedError { message: String },
+
     #[error("not found: {message}")]
     NotFoundError { message: String },
 
@@ -39,7 +42,4 @@ pub enum ContractError {
 
     #[error("validation failed: {message}")]
     ValidationError { message: String },
-
-    #[error("unimplemented: {message}")]
-    UnimplementedError { message: String },
 }

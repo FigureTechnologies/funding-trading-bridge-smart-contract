@@ -6,3 +6,6 @@ pub mod query;
 pub mod store;
 pub mod types;
 pub mod util;
+
+#[cfg(test)]
+pub mod test;
