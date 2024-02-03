@@ -4,6 +4,20 @@ use crate::util::validation_utils::check_funds_are_empty;
 use cosmwasm_std::{DepsMut, Env, MessageInfo, Response};
 use result_extensions::ResultExtensions;
 
+/// Invoked via the contract's execute functionality.  This function will only accept the request if
+/// the sender is the registered contract admin in the [contract state](crate::store::contract_state::ContractStateV1).
+/// The function swaps the current value in the contract state for the newly-provided value,
+/// effectively removing the previous admin and setting a new one.
+///
+/// # Parameters
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `env` An environment object provided by the cosmwasm framework.  Describes the contract's
+/// details, as well as blockchain information at the time of the transaction.
+/// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
+/// of the instantiation message, as well as the funds provided as an amount during the transaction.
+/// * `new_admin_address` The bech32 Provenance Blockchain address that will become the new admin
+/// upon successful invocation of this function.
 pub fn admin_update_admin(
     deps: DepsMut,
     env: Env,

@@ -1,6 +1,6 @@
 [package]
 name = "funding-trading-bridge-smart-contract"
-version = "0.0.4"
+version = "1.0.0"
 authors = ["Jake Schwartz <jschwartz@figure.com>"]
 edition = "2021"
 
