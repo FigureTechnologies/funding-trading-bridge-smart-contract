@@ -7,6 +7,16 @@ use provwasm_std::types::provenance::marker::v1::{MarkerAccount, MarkerQuerier};
 use provwasm_std::types::provenance::name::v1::{MsgBindNameRequest, NameRecord};
 use result_extensions::ResultExtensions;
 
+/// Generates a [name bind msg](MsgBindNameRequest) that will properly assign the given name value
+/// to a target address.  Assumes the parent name is unrestricted or that the contract has access to
+/// bind a name to the parent name.
+///
+/// # Parameters
+/// * `name` The dot-qualified name to use on-chain for name binding. Ex: myname.sc.pb will generate
+/// a msg that binds "myname" to the existing parent name "sc.pb".
+/// * `bind_to_address` The bech32 address to which the name will be bound.
+/// * `restricted` If true, the name will be bound as a restricted name, preventing future name
+/// bindings from using it as a parent name.
 pub fn msg_bind_name<S1: Into<String>, S2: Into<String>>(
     name: S1,
     bind_to_address: S2,
@@ -61,6 +71,14 @@ pub fn msg_bind_name<S1: Into<String>, S2: Into<String>>(
     .to_ok()
 }
 
+/// Ensures that the target account has all the specified attributes.  Does not check for valid
+/// attribute body contents.
+///
+/// # Parameters
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `account` The bech32 address for which to pull and verify attributes.
+/// * `attributes` All attribute names to verify.
 pub fn check_account_has_all_attributes<S: Into<String>>(
     deps: &DepsMut,
     account: S,
@@ -109,6 +127,16 @@ pub fn check_account_has_all_attributes<S: Into<String>>(
     ().to_ok()
 }
 
+/// Ensures that the target account holds enough of the target denom name by verifying their
+/// balances in the bank module.
+///
+/// # Parameters
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `account` The bech32 address of the account for which to verify balances.
+/// * `denom` The coin denomination for which balances are to be checked.
+/// * `required_amount` The minimum amount of coin that the target account must hold for the given
+/// denom to be considered valid.
 pub fn check_account_has_enough_denom<S1: Into<String>, S2: Into<String>>(
     deps: &Deps,
     account: S1,
@@ -139,6 +167,12 @@ pub fn check_account_has_enough_denom<S1: Into<String>, S2: Into<String>>(
     }
 }
 
+/// Fetches the bech32 address associated with the marker account for the given denomination.
+///
+/// # Parameters
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `denom` The on-chain name for the marker denom.
 pub fn get_marker_address_for_denom<S: Into<String>>(
     deps: &Deps,
     denom: S,

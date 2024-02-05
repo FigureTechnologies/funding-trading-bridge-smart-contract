@@ -2,6 +2,14 @@ use crate::types::denom::{Denom, DenomConversion};
 use crate::types::error::ContractError;
 use result_extensions::ResultExtensions;
 
+/// Converts the source denom amount to the target denom's amount, accounting for any remaining
+/// funds.
+///
+/// # Parameters
+/// * `source_amount` The amount of source denom to convert to target denom.
+/// * `source_denom` The denom defining the source amount.
+/// * `target_denom` The denom defining the target amount, allowing the relation between source and
+/// target to dictate the results.
 pub fn convert_denom(
     source_amount: u128,
     source_denom: &Denom,

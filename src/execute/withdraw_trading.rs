@@ -10,6 +10,20 @@ use provwasm_std::types::cosmos::base::v1beta1::Coin;
 use provwasm_std::types::provenance::marker::v1::{MsgBurnRequest, MsgTransferRequest};
 use result_extensions::ResultExtensions;
 
+/// Invoked via the contract's execute functionality.  The function will attempt to pull [trade_amount](withdraw_trading#trade_amount)
+/// of the trading marker's denom from the sender's account with a marker transfer, discern how much
+/// of the deposit denom to which the submitted amount is equivalent, transfer that amount to the
+/// sender, and then burn the exchanged trading marker denom.
+///
+/// # Parameters
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `env` An environment object provided by the cosmwasm framework.  Describes the contract's
+/// details, as well as blockchain information at the time of the transaction.
+/// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
+/// of the instantiation message, as well as the funds provided as an amount during the transaction.
+/// * `trade_amount` The amount of the trading marker to pull from the sender's account in exchange
+/// for deposit denom.
 pub fn withdraw_trading(
     deps: DepsMut,
     env: Env,

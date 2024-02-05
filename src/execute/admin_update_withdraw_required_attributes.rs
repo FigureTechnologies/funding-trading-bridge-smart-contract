@@ -4,6 +4,22 @@ use crate::util::validation_utils::check_funds_are_empty;
 use cosmwasm_std::{DepsMut, Env, MessageInfo, Response};
 use result_extensions::ResultExtensions;
 
+/// Invoked via the contract's execute functionality.  This function will only accept the request if
+/// the sender is the registered contract admin in the [contract_state](crate::store::contract_state::ContractStateV1).
+/// The function sets a new collection of attribute names required when an account withdraws their
+/// deposit denom from the contract via the [withdraw_trading](crate::execute::withdraw_trading::withdraw_trading)
+/// execution route.
+///
+/// # Parameters
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `env` An environment object provided by the cosmwasm framework.  Describes the contract's
+/// details, as well as blockchain information at the time of the transaction.
+/// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
+/// of the instantiation message, as well as the funds provided as an amount during the transaction.
+/// * `attributes` The new attributes that will be set in the contract state's
+/// [required_withdraw_attributes](crate::store::contract_state::ContractStateV1#required_withdraw_attributes)
+/// property upon successful execution.
 pub fn admin_update_withdraw_required_attributes(
     deps: DepsMut,
     env: Env,
