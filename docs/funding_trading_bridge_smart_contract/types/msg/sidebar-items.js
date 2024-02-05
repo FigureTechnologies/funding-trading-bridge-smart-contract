@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ExecuteMsg","MigrateMsg","QueryMsg"],"struct":["InstantiateMsg"]};

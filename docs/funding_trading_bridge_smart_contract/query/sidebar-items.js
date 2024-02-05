@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["query_contract_state"]};

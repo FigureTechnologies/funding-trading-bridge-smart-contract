@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["admin_update_admin","admin_update_deposit_required_attributes","admin_update_withdraw_required_attributes","fund_trading","withdraw_trading"]};

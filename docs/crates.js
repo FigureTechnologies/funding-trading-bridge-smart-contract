@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["funding_trading_bridge_smart_contract"];

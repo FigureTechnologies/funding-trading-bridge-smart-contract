@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["check_funds_are_empty"]};

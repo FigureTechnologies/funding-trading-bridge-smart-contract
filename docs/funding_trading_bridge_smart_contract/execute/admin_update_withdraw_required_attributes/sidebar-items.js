@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["admin_update_withdraw_required_attributes"]};
