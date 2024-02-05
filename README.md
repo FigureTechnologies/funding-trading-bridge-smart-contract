@@ -9,6 +9,10 @@ for its deployment.
 [![Latest Release][release-badge]][release-latest]
 [![Apache 2.0 License][license-badge]][license-url]
 
+## Documentation
+
+This repository publishes code documentation at the following location: [Documentation](https://figuretechnologies.github.io/funding-trading-bridge-smart-contract/funding_trading_bridge_smart_contract/)
+
 [license-badge]: https://img.shields.io/github/license/FigureTechnologies/funding-trading-bridge-smart-contract.svg
 [license-url]: https://github.com/FigureTechnologies/funding-trading-bridge-smart-contract/blob/main/LICENSE
 [release-badge]: https://img.shields.io/github/tag/FigureTechnologies/funding-trading-bridge-smart-contract.svg
