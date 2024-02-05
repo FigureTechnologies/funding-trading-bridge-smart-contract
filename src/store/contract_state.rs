@@ -11,18 +11,49 @@ pub const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 const NAMESPACE_CONTRACT_STATE_V1: &str = "contract_state_v1";
 const CONTRACT_STATE_V1: Item<ContractStateV1> = Item::new(NAMESPACE_CONTRACT_STATE_V1);
 
+/// Stores the core contract configurations created on instantiation and modified on migration.
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct ContractStateV1 {
+    /// The bech32 address of the account that has admin rights within this contract.
     pub admin: Addr,
+    /// A free-form name defining this particular contract instance.  Used for identification on
+    /// query purposes only.
     pub contract_name: String,
+    /// The crate name, used to ensure that newly-migrated instances match the same contract format.
     pub contract_type: String,
+    /// The crate version, used to ensure that newly-migrated instances do not attempt to use an
+    /// identical or older version.
     pub contract_version: String,
+    /// Defines the marker denom that is deposited to this contract in exchange for [trading_marker](ContractStateV1#trading_marker)
+    /// denom.
     pub deposit_marker: Denom,
+    /// Defines the marker denom that is sent to accounts from this contract in exchange for
+    /// [deposit_marker](ContractStateV1#deposit_marker).
     pub trading_marker: Denom,
+    /// Defines any blockchain attributes required on accounts in order to execute the [fund_trading](crate::execute::fund_trading::fund_trading)
+    /// execution route.
     pub required_deposit_attributes: Vec<String>,
+    /// Defines any blockchain attributes required on accounts in order to execute the
+    /// [withdraw_trading](crate::execute::withdraw_trading::withdraw_trading) execution route.
     pub required_withdraw_attributes: Vec<String>,
 }
 impl ContractStateV1 {
+    /// Constructs a new instance of this struct.
+    ///
+    /// # Parameters
+    /// * `admin` The bech32 address of the account that has admin rights within this contract.
+    /// * `contract_name` A free-form name defining this particular contract instance.  Used for
+    /// identification on query purposes only.
+    /// * `deposit_marker` Defines the marker denom that is deposited to this contract in exchange
+    /// for [trading_marker](ContractStateV1#trading_marker) denom.
+    /// * `trading_marker` Defines the marker denom that is sent to accounts from this contract in
+    /// exchange for [deposit_marker](ContractStateV1#deposit_marker).
+    /// * `required_deposit_attributes` Defines any blockchain attributes required on accounts in
+    /// order to execute the [fund_trading](crate::execute::fund_trading::fund_trading) execution
+    /// route.
+    /// * `required_withdraw_attributes` Defines any blockchain attributes required on accounts in
+    /// order to execute the [withdraw_trading](crate::execute::withdraw_trading::withdraw_trading)
+    /// execution route.
     pub fn new<S: Into<String>>(
         admin: Addr,
         contract_name: S,
@@ -44,6 +75,14 @@ impl ContractStateV1 {
     }
 }
 
+/// Overwrites the existing singleton contract storage instance of [ContractStateV1] with the input
+/// reference.  An error is returned if the store write is unsuccessful.
+///
+/// # Parameters
+///
+/// * `storage` A mutable instance of the contract storage value, allowing internal store
+/// manipulation.
+/// * `contract_state` The new value for which an internal storage write will be done.
 pub fn set_contract_state_v1(
     storage: &mut dyn Storage,
     contract_state: &ContractStateV1,
@@ -55,6 +94,14 @@ pub fn set_contract_state_v1(
         })
 }
 
+/// Fetches the current contract instance of contract state.  This call should never fail because
+/// the state is set on contract instantiation, but an error will be returned if store communication
+/// fails.
+///
+/// # Parameters
+///
+/// * `storage` An immutable instance of the contract storage value, allowing internal store data
+/// fetches.
 pub fn get_contract_state_v1(storage: &dyn Storage) -> Result<ContractStateV1, ContractError> {
     CONTRACT_STATE_V1
         .load(storage)

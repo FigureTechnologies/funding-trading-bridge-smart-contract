@@ -2,6 +2,13 @@ use crate::types::error::ContractError;
 use cosmwasm_std::MessageInfo;
 use result_extensions::ResultExtensions;
 
+/// Verifies that the funds sent into the message info are empty, ensuring that the contract has not
+/// received any funding when invoked.
+///
+/// # Parameters
+///
+/// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
+/// of the instantiation message, as well as the funds provided as an amount during the transaction.
 pub fn check_funds_are_empty(info: &MessageInfo) -> Result<(), ContractError> {
     if !info.funds.is_empty() {
         ContractError::InvalidFundsError {

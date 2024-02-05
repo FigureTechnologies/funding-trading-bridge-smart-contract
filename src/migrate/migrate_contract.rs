@@ -6,6 +6,14 @@ use cosmwasm_std::{to_binary, DepsMut, Response};
 use result_extensions::ResultExtensions;
 use semver::Version;
 
+/// The main entrypoint function for running a code migration.  Auxiliary code run when a stored
+/// instance of this contract on chain is migrated over the existing instance.  Verifies that the
+/// new code instance is a newer version than the current version, and then modifies the contract
+/// state to reflect the new version information contained in the stored file.
+///
+/// # Parameters
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
 pub fn migrate_contract(deps: DepsMut) -> Result<Response, ContractError> {
     let mut contract_state = get_contract_state_v1(deps.storage)?;
     validate_migration(&contract_state)?;

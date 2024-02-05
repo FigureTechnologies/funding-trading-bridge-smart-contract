@@ -6,6 +6,20 @@ use crate::util::validation_utils::check_funds_are_empty;
 use cosmwasm_std::{DepsMut, Env, MessageInfo, Response};
 use result_extensions::ResultExtensions;
 
+/// The core functionality that runs when the contract is first instantiated.  This creates the
+/// singleton instance of the [ContractStateV1] used to denote the various configurations for the
+/// contract, as well as optionally binding the contract's name if it does not need to be bound
+/// after creation due to namespace restrictions.
+///
+/// # Parameters
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `env` An environment object provided by the cosmwasm framework.  Describes the contract's
+/// details, as well as blockchain information at the time of the transaction.
+/// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
+/// of the instantiation message, as well as the funds provided as an amount during the transaction.
+/// * `msg` A custom instantiation message defined by this contract for creating the initial
+/// configuration used by the contract.
 pub fn instantiate_contract(
     deps: DepsMut,
     env: Env,
