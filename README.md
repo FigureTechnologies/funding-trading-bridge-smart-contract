@@ -5,6 +5,10 @@ denomination to dictate a precision by which its coin is valued.  It is designed
 and utilizes [ProvWasm](https://github.com/provenance-io/provwasm) to target the [Provenance Blockchain](https://provenance.io/)
 for its deployment.
 
+## Documentation
+
+This repository publishes code documentation at the following location: [Documentation](https://figuretechnologies.github.io/funding-trading-bridge-smart-contract/funding_trading_bridge_smart_contract/)
+
 ## Status
 [![Latest Release][release-badge]][release-latest]
 [![Apache 2.0 License][license-badge]][license-url]

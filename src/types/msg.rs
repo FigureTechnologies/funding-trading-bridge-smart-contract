@@ -6,13 +6,27 @@ use result_extensions::ResultExtensions;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+/// The msg that is sent to the chain in order to instantiate a new instance of this contract's
+/// stored code.  Used in the functionality described in [instantiate_contract](crate::instantiate::instantiate_contract::instantiate_contract).
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct InstantiateMsg {
+    /// A free-form name defining this particular contract instance.  Used for identification on
+    /// query purposes only.
     pub contract_name: String,
+    /// Defines the marker denom that is deposited to this contract in exchange for [trading_marker](ContractStateV1#trading_marker)
+    /// denom.
     pub deposit_marker: Denom,
+    /// Defines the marker denom that is sent to accounts from this contract in exchange for
+    /// [deposit_marker](ContractStateV1#deposit_marker).
     pub trading_marker: Denom,
+    /// Defines any blockchain attributes required on accounts in order to execute the [fund_trading](crate::execute::fund_trading::fund_trading)
+    /// execution route.
     pub required_deposit_attributes: Vec<String>,
+    /// Defines any blockchain attributes required on accounts in order to execute the
+    /// [withdraw_trading](crate::execute::withdraw_trading::withdraw_trading) execution route.
     pub required_withdraw_attributes: Vec<String>,
+    /// If provided, this value must be a valid provenance name module name that can be bound to an
+    /// unrestricted parent name.  This will cause the contract to bind the provided name to itself.
     pub name_to_bind: Option<String>,
 }
 impl SelfValidating for InstantiateMsg {
@@ -65,14 +79,50 @@ impl SelfValidating for InstantiateMsg {
     }
 }
 
+/// All defined paylods to be used when executing routes on this contract instance.
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
-    AdminUpdateAdmin { new_admin_address: String },
-    AdminUpdateDepositRequiredAttributes { attributes: Vec<String> },
-    AdminUpdateWithdrawRequiredAttributes { attributes: Vec<String> },
-    FundTrading { trade_amount: Uint128 },
-    WithdrawTrading { trade_amount: Uint128 },
+    /// A route that swaps the current value in the [contract state](crate::store::contract_state::ContractStateV1)
+    /// for the admin to the provided value.
+    AdminUpdateAdmin {
+        /// A bech32 address to use as the new administrator of the contract.
+        new_admin_address: String,
+    },
+    /// A route that sets a new collection of attribute names required when an account deposits their
+    /// deposit denom into the contract via the [fund_trading](crate::execute::fund_trading::fund_trading)
+    /// execution route.
+    AdminUpdateDepositRequiredAttributes {
+        /// The new attributes that will be set in the contract state's [required_deposit_attributes](crate::store::contract_state::ContractStateV1#required_deposit_attributes)
+        /// property upon successful execution.
+        attributes: Vec<String>,
+    },
+    /// A route that sets a new collection of attribute names required when an account withdraws
+    /// their deposit denom from the contract via the [withdraw_trading](crate::execute::withdraw_trading::withdraw_trading)
+    /// execution route.
+    AdminUpdateWithdrawRequiredAttributes {
+        /// The new attributes that will be set in the contract state's [required_withdraw_attributes](crate::store::contract_state::ContractStateV1#required_withdraw_attributes
+        /// property upon successful execution.
+        attributes: Vec<String>,
+    },
+    /// A route that will attempt to pull the trade amount of the deposit marker's denom from the
+    /// sender's account with a marker transfer, discern how much of the trading denom to which the
+    /// submitted amount is equivalent, and then mint and withdraw the equivalent amount into the
+    /// sender's account.
+    FundTrading {
+        /// The amount of the deposit marker to pull from the sender's account in exchange for
+        /// trading denom.
+        trade_amount: Uint128,
+    },
+    /// A route that will attempt to pull the trade amount of the trading marker's denom from the
+    /// sender's account with a marker transfer, discern how much of the deposit denom to which the
+    /// submitted amount is equivalent, transfer that amount to the sender, and then burn the
+    /// exchanged trading marker denom.
+    WithdrawTrading {
+        /// The amount of the trading marker to pull from the sender's account in exchange for
+        /// deposit denom.
+        trade_amount: Uint128,
+    },
 }
 impl SelfValidating for ExecuteMsg {
     fn self_validate(&self) -> Result<(), ContractError> {
@@ -122,9 +172,12 @@ impl SelfValidating for ExecuteMsg {
     }
 }
 
+/// All defined payloads to be used when querying routes on this contract instance.
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
+    /// A route that returns the current [contract state](crate::store::contract_state::ContractStateV1)
+    /// value stored in state.  Invokes the functionality defined in [query_contract_state](crate::query::query_contract_state).
     QueryContractState {},
 }
 impl SelfValidating for QueryMsg {
@@ -135,9 +188,13 @@ impl SelfValidating for QueryMsg {
     }
 }
 
+/// All defined payloads to be used when migrating to a new instance of this contract.
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum MigrateMsg {
+    /// The standard migration route that modifies the [contract state](crate::store::contract_state::ContractStateV1)
+    /// to include the new values defined in a target code instance.  Invokes the functionality
+    /// defined in [migrate_contract](crate::migrate::migrate_contract::migrate_contract).
     ContractUpgrade {},
 }
 impl SelfValidating for MigrateMsg {
