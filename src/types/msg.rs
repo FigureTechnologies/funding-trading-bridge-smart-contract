@@ -13,11 +13,11 @@ pub struct InstantiateMsg {
     /// A free-form name defining this particular contract instance.  Used for identification on
     /// query purposes only.
     pub contract_name: String,
-    /// Defines the marker denom that is deposited to this contract in exchange for [trading_marker](ContractStateV1#trading_marker)
+    /// Defines the marker denom that is deposited to this contract in exchange for [trading_marker](crate::store::contract_state::ContractStateV1#trading_marker)
     /// denom.
     pub deposit_marker: Denom,
     /// Defines the marker denom that is sent to accounts from this contract in exchange for
-    /// [deposit_marker](ContractStateV1#deposit_marker).
+    /// [deposit_marker](crate::store::contract_state::ContractStateV1#deposit_marker).
     pub trading_marker: Denom,
     /// Defines any blockchain attributes required on accounts in order to execute the [fund_trading](crate::execute::fund_trading::fund_trading)
     /// execution route.
@@ -101,7 +101,7 @@ pub enum ExecuteMsg {
     /// their deposit denom from the contract via the [withdraw_trading](crate::execute::withdraw_trading::withdraw_trading)
     /// execution route.
     AdminUpdateWithdrawRequiredAttributes {
-        /// The new attributes that will be set in the contract state's [required_withdraw_attributes](crate::store::contract_state::ContractStateV1#required_withdraw_attributes
+        /// The new attributes that will be set in the contract state's [required_withdraw_attributes](crate::store::contract_state::ContractStateV1#required_withdraw_attributes)
         /// property upon successful execution.
         attributes: Vec<String>,
     },
