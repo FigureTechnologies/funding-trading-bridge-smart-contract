@@ -44,14 +44,17 @@ pub fn admin_update_deposit_required_attributes(
         .add_attribute("contract_name", &contract_state.contract_name)
         .add_attribute(
             "previous_attributes",
-            previous_attributes.join(",").as_str(),
+            format!("[{}]", previous_attributes.join(",").as_str()),
         )
         .add_attribute(
             "new_attributes",
-            contract_state
-                .required_deposit_attributes
-                .join(",")
-                .as_str(),
+            format!(
+                "[{}]",
+                contract_state
+                    .required_deposit_attributes
+                    .join(",")
+                    .as_str()
+            ),
         )
         .to_ok()
 }
@@ -102,12 +105,51 @@ mod tests {
     }
 
     #[test]
-    fn successful_input_should_derive_a_response() {
+    fn successful_input_should_derive_a_response_with_both_previous_and_new_values() {
+        do_successful_attribute_test(
+            "Both previous and new values populated",
+            vec!["prevA".to_string(), "prevB".to_string()],
+            vec!["new".to_string()],
+            "[prevA,prevB]",
+            "[new]",
+        );
+    }
+
+    #[test]
+    fn successful_input_should_derive_a_response_with_missing_previous_values() {
+        do_successful_attribute_test(
+            "Missing previous values",
+            vec![],
+            vec!["new-value".to_string()],
+            "[]",
+            "[new-value]",
+        );
+    }
+
+    #[test]
+    fn successful_input_should_derive_a_response_with_missing_new_values() {
+        do_successful_attribute_test(
+            "Missing new values",
+            vec!["old-value".to_string()],
+            vec![],
+            "[old-value]",
+            "[]",
+        );
+    }
+
+    fn do_successful_attribute_test<S1: Into<String>, S2: Into<String>, S3: Into<String>>(
+        test_name: S1,
+        previous_attributes: Vec<String>,
+        new_attributes: Vec<String>,
+        expected_previous_attributes_attr_value: S2,
+        expected_new_attributes_attr_value: S3,
+    ) {
+        let test_name = test_name.into();
         let mut deps = mock_provenance_dependencies();
         test_instantiate_with_msg(
             deps.as_mut(),
             InstantiateMsg {
-                required_deposit_attributes: vec!["prevA".to_string(), "prevB".to_string()],
+                required_deposit_attributes: previous_attributes.to_vec(),
                 ..InstantiateMsg::default()
             },
         );
@@ -115,23 +157,50 @@ mod tests {
             deps.as_mut(),
             mock_env(),
             mock_info(DEFAULT_ADMIN, &[]),
-            vec!["new".to_string()],
+            new_attributes,
         )
-        .expect("proper input on an instantiated contract should derive a successful response");
+        .unwrap_or_else(|_| {
+            panic!(
+                "{}: proper input on an instantiated contract should derive a successful response",
+                test_name
+            )
+        });
         assert!(
             response.messages.is_empty(),
-            "no messages should be emitted in the response",
+            "{}: no messages should be emitted in the response",
+            test_name,
         );
         assert_eq!(
             6,
             response.attributes.len(),
-            "six attributes should be emitted in the response",
+            "{}: six attributes should be emitted in the response",
+            test_name,
         );
-        response.assert_attribute("action", "admin_update_deposit_required_attributes");
-        response.assert_attribute("contract_address", MOCK_CONTRACT_ADDR);
-        response.assert_attribute("contract_type", CONTRACT_TYPE);
-        response.assert_attribute("contract_name", DEFAULT_CONTRACT_NAME);
-        response.assert_attribute("previous_attributes", "prevA,prevB");
-        response.assert_attribute("new_attributes", "new");
+        response.assert_attribute_with_message_prefix(
+            "action",
+            "admin_update_deposit_required_attributes",
+            &test_name,
+        );
+        response.assert_attribute_with_message_prefix(
+            "contract_address",
+            MOCK_CONTRACT_ADDR,
+            &test_name,
+        );
+        response.assert_attribute_with_message_prefix("contract_type", CONTRACT_TYPE, &test_name);
+        response.assert_attribute_with_message_prefix(
+            "contract_name",
+            DEFAULT_CONTRACT_NAME,
+            &test_name,
+        );
+        response.assert_attribute_with_message_prefix(
+            "previous_attributes",
+            expected_previous_attributes_attr_value.into(),
+            &test_name,
+        );
+        response.assert_attribute_with_message_prefix(
+            "new_attributes",
+            expected_new_attributes_attr_value.into(),
+            &test_name,
+        );
     }
 }
