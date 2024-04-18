@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/types/msg.rs`."><title>msg.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="funding_trading_bridge_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/types/msg.rs`."><title>msg.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="funding_trading_bridge_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../funding_trading_bridge_smart_contract/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -389,7 +391,7 @@
 <span class="kw">use </span>schemars::JsonSchema;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="doccomment">/// The msg that is sent to the chain in order to instantiate a new instance of this contract&#39;s
+<span class="doccomment">/// The msg that is sent to the chain in order to instantiate a new instance of this contract's
 /// stored code.  Used in the functionality described in [instantiate_contract](crate::instantiate::instantiate_contract::instantiate_contract).
 </span><span class="attr">#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 </span><span class="kw">pub struct </span>InstantiateMsg {
@@ -416,19 +418,19 @@
     <span class="kw">fn </span>self_validate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), ContractError&gt; {
         <span class="kw">if </span><span class="self">self</span>.contract_name.is_empty() {
             <span class="kw">return </span>ContractError::ValidationError {
-                message: <span class="string">&quot;contract name cannot be empty&quot;</span>.to_string(),
+                message: <span class="string">"contract name cannot be empty"</span>.to_string(),
             }
             .to_err();
         }
         <span class="self">self</span>.deposit_marker
             .self_validate()
             .map_err(|e| ContractError::ValidationError {
-                message: <span class="macro">format!</span>(<span class="string">&quot;deposit marker: {e:?}&quot;</span>),
+                message: <span class="macro">format!</span>(<span class="string">"deposit marker: {e:?}"</span>),
             })<span class="question-mark">?</span>;
         <span class="self">self</span>.trading_marker
             .self_validate()
             .map_err(|e| ContractError::ValidationError {
-                message: <span class="macro">format!</span>(<span class="string">&quot;trading marker: {e:?}&quot;</span>),
+                message: <span class="macro">format!</span>(<span class="string">"trading marker: {e:?}"</span>),
             })<span class="question-mark">?</span>;
         <span class="kw">if </span><span class="self">self
             </span>.required_deposit_attributes
@@ -436,7 +438,7 @@
             .any(|attr| attr.is_empty())
         {
             <span class="kw">return </span>ContractError::ValidationError {
-                message: <span class="string">&quot;all required deposit attributes must be non-empty values&quot;</span>.to_string(),
+                message: <span class="string">"all required deposit attributes must be non-empty values"</span>.to_string(),
             }
             .to_err();
         }
@@ -446,14 +448,14 @@
             .any(|attr| attr.is_empty())
         {
             <span class="kw">return </span>ContractError::ValidationError {
-                message: <span class="string">&quot;all required withdraw attributes must be non-empty values&quot;</span>.to_string(),
+                message: <span class="string">"all required withdraw attributes must be non-empty values"</span>.to_string(),
             }
             .to_err();
         }
         <span class="kw">if let </span><span class="prelude-val">Some</span>(name) = <span class="kw-2">&amp;</span><span class="self">self</span>.name_to_bind {
             <span class="kw">if </span>name.is_empty() {
                 <span class="kw">return </span>ContractError::ValidationError {
-                    message: <span class="string">&quot;contract name cannot be specified as empty string&quot;</span>.to_string(),
+                    message: <span class="string">"contract name cannot be specified as empty string"</span>.to_string(),
                 }
                 .to_err();
             }
@@ -464,7 +466,7 @@
 
 <span class="doccomment">/// All defined paylods to be used when executing routes on this contract instance.
 </span><span class="attr">#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-#[serde(rename_all = <span class="string">&quot;snake_case&quot;</span>)]
+#[serde(rename_all = <span class="string">"snake_case"</span>)]
 </span><span class="kw">pub enum </span>ExecuteMsg {
     <span class="doccomment">/// A route that swaps the current value in the [contract state](crate::store::contract_state::ContractStateV1)
     /// for the admin to the provided value.
@@ -476,7 +478,7 @@
     /// deposit denom into the contract via the [fund_trading](crate::execute::fund_trading::fund_trading)
     /// execution route.
     </span>AdminUpdateDepositRequiredAttributes {
-        <span class="doccomment">/// The new attributes that will be set in the contract state&#39;s [required_deposit_attributes](crate::store::contract_state::ContractStateV1#required_deposit_attributes)
+        <span class="doccomment">/// The new attributes that will be set in the contract state's [required_deposit_attributes](crate::store::contract_state::ContractStateV1#required_deposit_attributes)
         /// property upon successful execution.
         </span>attributes: Vec&lt;String&gt;,
     },
@@ -484,25 +486,25 @@
     /// their deposit denom from the contract via the [withdraw_trading](crate::execute::withdraw_trading::withdraw_trading)
     /// execution route.
     </span>AdminUpdateWithdrawRequiredAttributes {
-        <span class="doccomment">/// The new attributes that will be set in the contract state&#39;s [required_withdraw_attributes](crate::store::contract_state::ContractStateV1#required_withdraw_attributes)
+        <span class="doccomment">/// The new attributes that will be set in the contract state's [required_withdraw_attributes](crate::store::contract_state::ContractStateV1#required_withdraw_attributes)
         /// property upon successful execution.
         </span>attributes: Vec&lt;String&gt;,
     },
-    <span class="doccomment">/// A route that will attempt to pull the trade amount of the deposit marker&#39;s denom from the
-    /// sender&#39;s account with a marker transfer, discern how much of the trading denom to which the
+    <span class="doccomment">/// A route that will attempt to pull the trade amount of the deposit marker's denom from the
+    /// sender's account with a marker transfer, discern how much of the trading denom to which the
     /// submitted amount is equivalent, and then mint and withdraw the equivalent amount into the
-    /// sender&#39;s account.
+    /// sender's account.
     </span>FundTrading {
-        <span class="doccomment">/// The amount of the deposit marker to pull from the sender&#39;s account in exchange for
+        <span class="doccomment">/// The amount of the deposit marker to pull from the sender's account in exchange for
         /// trading denom.
         </span>trade_amount: Uint128,
     },
-    <span class="doccomment">/// A route that will attempt to pull the trade amount of the trading marker&#39;s denom from the
-    /// sender&#39;s account with a marker transfer, discern how much of the deposit denom to which the
+    <span class="doccomment">/// A route that will attempt to pull the trade amount of the trading marker's denom from the
+    /// sender's account with a marker transfer, discern how much of the deposit denom to which the
     /// submitted amount is equivalent, transfer that amount to the sender, and then burn the
     /// exchanged trading marker denom.
     </span>WithdrawTrading {
-        <span class="doccomment">/// The amount of the trading marker to pull from the sender&#39;s account in exchange for
+        <span class="doccomment">/// The amount of the trading marker to pull from the sender's account in exchange for
         /// deposit denom.
         </span>trade_amount: Uint128,
     },
@@ -513,7 +515,7 @@
             ExecuteMsg::AdminUpdateAdmin { new_admin_address } =&gt; {
                 <span class="kw">if </span>new_admin_address.is_empty() {
                     <span class="kw">return </span>ContractError::ValidationError {
-                        message: <span class="string">&quot;new_admin_address param must be supplied&quot;</span>.to_string(),
+                        message: <span class="string">"new_admin_address param must be supplied"</span>.to_string(),
                     }
                     .to_err();
                 }
@@ -521,7 +523,7 @@
             ExecuteMsg::AdminUpdateDepositRequiredAttributes { attributes } =&gt; {
                 <span class="kw">if </span>attributes.iter().any(|attr| attr.is_empty()) {
                     <span class="kw">return </span>ContractError::ValidationError {
-                        message: <span class="string">&quot;all specified attributes must be non-empty values&quot;</span>.to_string(),
+                        message: <span class="string">"all specified attributes must be non-empty values"</span>.to_string(),
                     }
                     .to_err();
                 }
@@ -529,7 +531,7 @@
             ExecuteMsg::AdminUpdateWithdrawRequiredAttributes { attributes } =&gt; {
                 <span class="kw">if </span>attributes.iter().any(|attr| attr.is_empty()) {
                     <span class="kw">return </span>ContractError::ValidationError {
-                        message: <span class="string">&quot;all specified attributes must be non-empty values&quot;</span>.to_string(),
+                        message: <span class="string">"all specified attributes must be non-empty values"</span>.to_string(),
                     }
                     .to_err();
                 }
@@ -537,7 +539,7 @@
             ExecuteMsg::FundTrading { trade_amount } =&gt; {
                 <span class="kw">if </span>trade_amount.u128() == <span class="number">0 </span>{
                     <span class="kw">return </span>ContractError::ValidationError {
-                        message: <span class="string">&quot;trade amount must be greater than zero&quot;</span>.to_string(),
+                        message: <span class="string">"trade amount must be greater than zero"</span>.to_string(),
                     }
                     .to_err();
                 }
@@ -545,7 +547,7 @@
             ExecuteMsg::WithdrawTrading { trade_amount } =&gt; {
                 <span class="kw">if </span>trade_amount.u128() == <span class="number">0 </span>{
                     <span class="kw">return </span>ContractError::ValidationError {
-                        message: <span class="string">&quot;trade amount must be greater than zero&quot;</span>.to_string(),
+                        message: <span class="string">"trade amount must be greater than zero"</span>.to_string(),
                     }
                     .to_err();
                 }
@@ -557,7 +559,7 @@
 
 <span class="doccomment">/// All defined payloads to be used when querying routes on this contract instance.
 </span><span class="attr">#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-#[serde(rename_all = <span class="string">&quot;snake_case&quot;</span>)]
+#[serde(rename_all = <span class="string">"snake_case"</span>)]
 </span><span class="kw">pub enum </span>QueryMsg {
     <span class="doccomment">/// A route that returns the current [contract state](crate::store::contract_state::ContractStateV1)
     /// value stored in state.  Invokes the functionality defined in [query_contract_state](crate::query::query_contract_state).
@@ -573,7 +575,7 @@
 
 <span class="doccomment">/// All defined payloads to be used when migrating to a new instance of this contract.
 </span><span class="attr">#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-#[serde(rename_all = <span class="string">&quot;snake_case&quot;</span>)]
+#[serde(rename_all = <span class="string">"snake_case"</span>)]
 </span><span class="kw">pub enum </span>MigrateMsg {
     <span class="doccomment">/// The standard migration route that modifies the [contract state](crate::store::contract_state::ContractStateV1)
     /// to include the new values defined in a target code instance.  Invokes the functionality
@@ -600,84 +602,84 @@
     </span><span class="kw">fn </span>instantiate_msg_self_validation_should_function_properly() {
         assert_validation_err(
             <span class="kw-2">&amp;</span>InstantiateMsg {
-                contract_name: <span class="string">&quot;&quot;</span>.to_string(),
+                contract_name: <span class="string">""</span>.to_string(),
                 ..InstantiateMsg::default()
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected missing contract name to fail&quot;</span>),
-            <span class="string">&quot;contract name cannot be empty&quot;</span>,
+            .expect_err(<span class="string">"expected missing contract name to fail"</span>),
+            <span class="string">"contract name cannot be empty"</span>,
         );
         assert_validation_err(
             <span class="kw-2">&amp;</span>InstantiateMsg {
                 deposit_marker: Denom {
-                    name: <span class="string">&quot;&quot;</span>.to_string(),
+                    name: <span class="string">""</span>.to_string(),
                     precision: Uint64::new(<span class="number">10</span>),
                 },
                 ..InstantiateMsg::default()
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid deposit marker to fail&quot;</span>),
-            <span class="string">&quot;deposit marker: name cannot be empty&quot;</span>,
+            .expect_err(<span class="string">"expected invalid deposit marker to fail"</span>),
+            <span class="string">"deposit marker: name cannot be empty"</span>,
         );
         assert_validation_err(
             <span class="kw-2">&amp;</span>InstantiateMsg {
                 trading_marker: Denom {
-                    name: <span class="string">&quot;&quot;</span>.to_string(),
+                    name: <span class="string">""</span>.to_string(),
                     precision: Uint64::new(<span class="number">10</span>),
                 },
                 ..InstantiateMsg::default()
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid trading marker to fail&quot;</span>),
-            <span class="string">&quot;trading marker: name cannot be empty&quot;</span>,
+            .expect_err(<span class="string">"expected invalid trading marker to fail"</span>),
+            <span class="string">"trading marker: name cannot be empty"</span>,
         );
         assert_validation_err(
             <span class="kw-2">&amp;</span>InstantiateMsg {
-                required_deposit_attributes: <span class="macro">vec!</span>[<span class="string">&quot;&quot;</span>.to_string()],
+                required_deposit_attributes: <span class="macro">vec!</span>[<span class="string">""</span>.to_string()],
                 ..InstantiateMsg::default()
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid required deposit attributes to fail&quot;</span>),
-            <span class="string">&quot;all required deposit attributes must be non-empty values&quot;</span>,
+            .expect_err(<span class="string">"expected invalid required deposit attributes to fail"</span>),
+            <span class="string">"all required deposit attributes must be non-empty values"</span>,
         );
         assert_validation_err(
             <span class="kw-2">&amp;</span>InstantiateMsg {
-                required_withdraw_attributes: <span class="macro">vec!</span>[<span class="string">&quot;&quot;</span>.to_string()],
+                required_withdraw_attributes: <span class="macro">vec!</span>[<span class="string">""</span>.to_string()],
                 ..InstantiateMsg::default()
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid required withdraw attributes to fail&quot;</span>),
-            <span class="string">&quot;all required withdraw attributes must be non-empty values&quot;</span>,
+            .expect_err(<span class="string">"expected invalid required withdraw attributes to fail"</span>),
+            <span class="string">"all required withdraw attributes must be non-empty values"</span>,
         );
         assert_validation_err(
             <span class="kw-2">&amp;</span>InstantiateMsg {
-                name_to_bind: <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>.to_string()),
+                name_to_bind: <span class="prelude-val">Some</span>(<span class="string">""</span>.to_string()),
                 ..InstantiateMsg::default()
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid name to bind to fail&quot;</span>),
-            <span class="string">&quot;contract name cannot be specified as empty string&quot;</span>,
+            .expect_err(<span class="string">"expected invalid name to bind to fail"</span>),
+            <span class="string">"contract name cannot be specified as empty string"</span>,
         );
         InstantiateMsg::default()
             .self_validate()
-            .expect(<span class="string">&quot;proper instantiate message values should pass validation&quot;</span>);
+            .expect(<span class="string">"proper instantiate message values should pass validation"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>admin_update_admin_execute_message_validation_should_function_properly() {
         assert_validation_err(
             <span class="kw-2">&amp;</span>ExecuteMsg::AdminUpdateAdmin {
-                new_admin_address: <span class="string">&quot;&quot;</span>.to_string(),
+                new_admin_address: <span class="string">""</span>.to_string(),
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid new_admin_address to fail&quot;</span>),
-            <span class="string">&quot;new_admin_address param must be supplied&quot;</span>,
+            .expect_err(<span class="string">"expected invalid new_admin_address to fail"</span>),
+            <span class="string">"new_admin_address param must be supplied"</span>,
         );
         ExecuteMsg::AdminUpdateAdmin {
-            new_admin_address: <span class="string">&quot;some-addr&quot;</span>.to_string(),
+            new_admin_address: <span class="string">"some-addr"</span>.to_string(),
         }
         .self_validate()
-        .expect(<span class="string">&quot;non-empty input for new admin address should succeed&quot;</span>);
+        .expect(<span class="string">"non-empty input for new admin address should succeed"</span>);
     }
 
     <span class="attr">#[test]
@@ -685,20 +687,20 @@
     ) {
         assert_validation_err(
             <span class="kw-2">&amp;</span>ExecuteMsg::AdminUpdateDepositRequiredAttributes {
-                attributes: <span class="macro">vec!</span>[<span class="string">&quot;&quot;</span>.to_string()],
+                attributes: <span class="macro">vec!</span>[<span class="string">""</span>.to_string()],
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid attributes to fail&quot;</span>),
-            <span class="string">&quot;all specified attributes must be non-empty values&quot;</span>,
+            .expect_err(<span class="string">"expected invalid attributes to fail"</span>),
+            <span class="string">"all specified attributes must be non-empty values"</span>,
         );
         ExecuteMsg::AdminUpdateDepositRequiredAttributes { attributes: <span class="macro">vec!</span>[] }
             .self_validate()
-            .expect(<span class="string">&quot;empty attributes should succeed&quot;</span>);
+            .expect(<span class="string">"empty attributes should succeed"</span>);
         ExecuteMsg::AdminUpdateDepositRequiredAttributes {
-            attributes: <span class="macro">vec!</span>[<span class="string">&quot;some-attribute&quot;</span>.to_string()],
+            attributes: <span class="macro">vec!</span>[<span class="string">"some-attribute"</span>.to_string()],
         }
         .self_validate()
-        .expect(<span class="string">&quot;specified attributes should succeed&quot;</span>);
+        .expect(<span class="string">"specified attributes should succeed"</span>);
     }
 
     <span class="attr">#[test]
@@ -706,20 +708,20 @@
     ) {
         assert_validation_err(
             <span class="kw-2">&amp;</span>ExecuteMsg::AdminUpdateWithdrawRequiredAttributes {
-                attributes: <span class="macro">vec!</span>[<span class="string">&quot;&quot;</span>.to_string()],
+                attributes: <span class="macro">vec!</span>[<span class="string">""</span>.to_string()],
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid attributes to fail&quot;</span>),
-            <span class="string">&quot;all specified attributes must be non-empty values&quot;</span>,
+            .expect_err(<span class="string">"expected invalid attributes to fail"</span>),
+            <span class="string">"all specified attributes must be non-empty values"</span>,
         );
         ExecuteMsg::AdminUpdateWithdrawRequiredAttributes { attributes: <span class="macro">vec!</span>[] }
             .self_validate()
-            .expect(<span class="string">&quot;empty attributes should succeed&quot;</span>);
+            .expect(<span class="string">"empty attributes should succeed"</span>);
         ExecuteMsg::AdminUpdateWithdrawRequiredAttributes {
-            attributes: <span class="macro">vec!</span>[<span class="string">&quot;some-attribute&quot;</span>.to_string()],
+            attributes: <span class="macro">vec!</span>[<span class="string">"some-attribute"</span>.to_string()],
         }
         .self_validate()
-        .expect(<span class="string">&quot;specified attributes should succeed&quot;</span>);
+        .expect(<span class="string">"specified attributes should succeed"</span>);
     }
 
     <span class="attr">#[test]
@@ -729,14 +731,14 @@
                 trade_amount: Uint128::new(<span class="number">0</span>),
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid trade amount to fail&quot;</span>),
-            <span class="string">&quot;trade amount must be greater than zero&quot;</span>,
+            .expect_err(<span class="string">"expected invalid trade amount to fail"</span>),
+            <span class="string">"trade amount must be greater than zero"</span>,
         );
         ExecuteMsg::FundTrading {
             trade_amount: Uint128::new(<span class="number">1</span>),
         }
         .self_validate()
-        .expect(<span class="string">&quot;a valid funding trading msg should pass validation&quot;</span>);
+        .expect(<span class="string">"a valid funding trading msg should pass validation"</span>);
     }
 
     <span class="attr">#[test]
@@ -746,21 +748,21 @@
                 trade_amount: Uint128::new(<span class="number">0</span>),
             }
             .self_validate()
-            .expect_err(<span class="string">&quot;expected invalid trade amount to fail&quot;</span>),
-            <span class="string">&quot;trade amount must be greater than zero&quot;</span>,
+            .expect_err(<span class="string">"expected invalid trade amount to fail"</span>),
+            <span class="string">"trade amount must be greater than zero"</span>,
         );
         ExecuteMsg::WithdrawTrading {
             trade_amount: Uint128::new(<span class="number">1</span>),
         }
         .self_validate()
-        .expect(<span class="string">&quot;a valid withdraw trading msg should pass validation&quot;</span>);
+        .expect(<span class="string">"a valid withdraw trading msg should pass validation"</span>);
     }
 
     <span class="kw">fn </span>assert_validation_err&lt;S: Into&lt;String&gt;&gt;(error: <span class="kw-2">&amp;</span>ContractError, expected_message: S) {
         <span class="kw">let </span>_message = expected_message.into();
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(error, ContractError::ValidationError { message: _message },),
-            <span class="string">&quot;expected validation error with proper message {_message} but got: {error:?}&quot;</span>,
+            <span class="string">"expected validation error with proper message {_message} but got: {error:?}"</span>,
         );
     }
 }

@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/execute/fund_trading.rs`."><title>fund_trading.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="funding_trading_bridge_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/execute/fund_trading.rs`."><title>fund_trading.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="funding_trading_bridge_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../funding_trading_bridge_smart_contract/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -430,19 +432,19 @@
 };
 <span class="kw">use </span>result_extensions::ResultExtensions;
 
-<span class="doccomment">/// Invoked via the contract&#39;s execute functionality.  The function will attempt to pull [trade_amount](fund_trading#trade_amount)
-/// of the deposit marker&#39;s denom from the sender&#39;s account with a marker transfer, discern how much
+<span class="doccomment">/// Invoked via the contract's execute functionality.  The function will attempt to pull [trade_amount](fund_trading#trade_amount)
+/// of the deposit marker's denom from the sender's account with a marker transfer, discern how much
 /// of the trading denom to which the submitted amount is equivalent, and then mint and withdraw
-/// that equivalent amount into the sender&#39;s account.
+/// that equivalent amount into the sender's account.
 ///
 /// # Parameters
 /// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
 /// resources like contract internal storage and a querier to retrieve blockchain objects.
-/// * `env` An environment object provided by the cosmwasm framework.  Describes the contract&#39;s
+/// * `env` An environment object provided by the cosmwasm framework.  Describes the contract's
 /// details, as well as blockchain information at the time of the transaction.
 /// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
 /// of the instantiation message, as well as the funds provided as an amount during the transaction.
-/// * `trade_amount` The amount of the deposit marker to pull from the sender&#39;s account in exchange
+/// * `trade_amount` The amount of the deposit marker to pull from the sender's account in exchange
 /// for trading denom.
 </span><span class="kw">pub fn </span>fund_trading(
     deps: DepsMut,
@@ -471,7 +473,7 @@
     <span class="kw">if </span>conversion.target_amount == <span class="number">0 </span>{
         <span class="kw">return </span>ContractError::InvalidFundsError {
             message: <span class="macro">format!</span>(
-                <span class="string">&quot;sent [{}{}], but that is not enough to convert to at least one [{}]&quot;</span>,
+                <span class="string">"sent [{}{}], but that is not enough to convert to at least one [{}]"</span>,
                 trade_amount,
                 <span class="kw-2">&amp;</span>contract_state.deposit_marker.name,
                 <span class="kw-2">&amp;</span>contract_state.trading_marker.name,
@@ -510,15 +512,15 @@
         .add_message(transfer_msg)
         .add_message(mint_msg)
         .add_message(withdraw_msg)
-        .add_attribute(<span class="string">&quot;action&quot;</span>, <span class="string">&quot;fund_trading&quot;</span>)
-        .add_attribute(<span class="string">&quot;contract_address&quot;</span>, env.contract.address.to_string())
-        .add_attribute(<span class="string">&quot;contract_type&quot;</span>, CONTRACT_TYPE)
-        .add_attribute(<span class="string">&quot;contract_name&quot;</span>, <span class="kw-2">&amp;</span>contract_state.contract_name)
-        .add_attribute(<span class="string">&quot;deposit_input_denom&quot;</span>, <span class="kw-2">&amp;</span>contract_state.deposit_marker.name)
-        .add_attribute(<span class="string">&quot;deposit_requested_amount&quot;</span>, trade_amount.to_string())
-        .add_attribute(<span class="string">&quot;deposit_actual_amount&quot;</span>, transferred_amount.to_string())
-        .add_attribute(<span class="string">&quot;received_denom&quot;</span>, minted_coin.denom)
-        .add_attribute(<span class="string">&quot;received_amount&quot;</span>, minted_coin.amount)
+        .add_attribute(<span class="string">"action"</span>, <span class="string">"fund_trading"</span>)
+        .add_attribute(<span class="string">"contract_address"</span>, env.contract.address.to_string())
+        .add_attribute(<span class="string">"contract_type"</span>, CONTRACT_TYPE)
+        .add_attribute(<span class="string">"contract_name"</span>, <span class="kw-2">&amp;</span>contract_state.contract_name)
+        .add_attribute(<span class="string">"deposit_input_denom"</span>, <span class="kw-2">&amp;</span>contract_state.deposit_marker.name)
+        .add_attribute(<span class="string">"deposit_requested_amount"</span>, trade_amount.to_string())
+        .add_attribute(<span class="string">"deposit_actual_amount"</span>, transferred_amount.to_string())
+        .add_attribute(<span class="string">"received_denom"</span>, minted_coin.denom)
+        .add_attribute(<span class="string">"received_amount"</span>, minted_coin.amount)
         .to_ok()
 }
 
@@ -556,24 +558,24 @@
         <span class="kw">let </span>error = fund_trading(
             deps.as_mut(),
             mock_env(),
-            mock_info(<span class="string">&quot;some-sender&quot;</span>, <span class="kw-2">&amp;</span>coins(<span class="number">10</span>, <span class="string">&quot;nhash&quot;</span>)),
+            mock_info(<span class="string">"some-sender"</span>, <span class="kw-2">&amp;</span>coins(<span class="number">10</span>, <span class="string">"nhash"</span>)),
             <span class="number">10</span>,
         )
-        .expect_err(<span class="string">&quot;an error should be emitted when coin is provided&quot;</span>);
+        .expect_err(<span class="string">"an error should be emitted when coin is provided"</span>);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(error, ContractError::InvalidFundsError { .. },),
-            <span class="string">&quot;unexpected error type encountered when providing funds&quot;</span>,
+            <span class="string">"unexpected error type encountered when providing funds"</span>,
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>missing_contract_state_should_cause_an_error() {
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
-        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">&quot;some-sender&quot;</span>, <span class="kw-2">&amp;</span>[]), <span class="number">10</span>)
-            .expect_err(<span class="string">&quot;an error should be emitted when no contract state exists&quot;</span>);
+        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"some-sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">10</span>)
+            .expect_err(<span class="string">"an error should be emitted when no contract state exists"</span>);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(error, ContractError::StorageError { .. },),
-            <span class="string">&quot;unexpected error type encountered when no contract storage exists&quot;</span>,
+            <span class="string">"unexpected error type encountered when no contract storage exists"</span>,
         );
     }
 
@@ -584,18 +586,18 @@
             <span class="kw-2">&amp;mut </span>querier,
             QueryBalanceResponse {
                 balance: <span class="prelude-val">Some</span>(Coin {
-                    amount: <span class="string">&quot;10&quot;</span>.to_string(),
+                    amount: <span class="string">"10"</span>.to_string(),
                     denom: DEFAULT_DEPOSIT_DENOM_NAME.to_string(),
                 }),
             },
         );
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">&quot;some-sender&quot;</span>, <span class="kw-2">&amp;</span>[]), <span class="number">11</span>)
-            .expect_err(<span class="string">&quot;an error should occur when the sender tries to trade more funds than are available to them&quot;</span>);
+        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"some-sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">11</span>)
+            .expect_err(<span class="string">"an error should occur when the sender tries to trade more funds than are available to them"</span>);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(error, ContractError::InvalidAccountError { .. }),
-            <span class="string">&quot;unexpected error type encountered when the sender tries to trade too much: {error:?}&quot;</span>,
+            <span class="string">"unexpected error type encountered when the sender tries to trade too much: {error:?}"</span>,
         );
     }
 
@@ -606,7 +608,7 @@
             <span class="kw-2">&amp;mut </span>querier,
             QueryBalanceResponse {
                 balance: <span class="prelude-val">Some</span>(Coin {
-                    amount: <span class="string">&quot;10&quot;</span>.to_string(),
+                    amount: <span class="string">"10"</span>.to_string(),
                     denom: DEFAULT_DEPOSIT_DENOM_NAME.to_string(),
                 }),
             },
@@ -614,18 +616,18 @@
         QueryAttributesRequest::mock_response(
             <span class="kw-2">&amp;mut </span>querier,
             QueryAttributesResponse {
-                account: <span class="string">&quot;some-sender&quot;</span>.to_string(),
+                account: <span class="string">"some-sender"</span>.to_string(),
                 attributes: <span class="macro">vec!</span>[],
                 pagination: <span class="prelude-val">None</span>,
             },
         );
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">&quot;some-sender&quot;</span>, <span class="kw-2">&amp;</span>[]), <span class="number">10</span>)
-            .expect_err(<span class="string">&quot;an error should occur when the sender does not have a required attribute&quot;</span>);
+        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"some-sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">10</span>)
+            .expect_err(<span class="string">"an error should occur when the sender does not have a required attribute"</span>);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(error, ContractError::InvalidAccountError { .. },),
-            <span class="string">&quot;unexpected error when account is missing required attributes&quot;</span>,
+            <span class="string">"unexpected error when account is missing required attributes"</span>,
         );
     }
 
@@ -636,7 +638,7 @@
             <span class="kw-2">&amp;mut </span>querier,
             QueryBalanceResponse {
                 balance: <span class="prelude-val">Some</span>(Coin {
-                    amount: <span class="string">&quot;10&quot;</span>.to_string(),
+                    amount: <span class="string">"10"</span>.to_string(),
                     denom: DEFAULT_DEPOSIT_DENOM_NAME.to_string(),
                 }),
             },
@@ -644,12 +646,12 @@
         QueryAttributesRequest::mock_response(
             <span class="kw-2">&amp;mut </span>querier,
             QueryAttributesResponse {
-                account: <span class="string">&quot;sender&quot;</span>.to_string(),
+                account: <span class="string">"sender"</span>.to_string(),
                 attributes: <span class="macro">vec!</span>[Attribute {
                     name: DEFAULT_REQUIRED_DEPOSIT_ATTRIBUTE.to_string(),
                     value: <span class="macro">vec!</span>[],
                     attribute_type: AttributeType::String <span class="kw">as </span>i32,
-                    address: <span class="string">&quot;addr&quot;</span>.to_string(),
+                    address: <span class="string">"addr"</span>.to_string(),
                 }],
                 pagination: <span class="prelude-val">None</span>,
             },
@@ -660,15 +662,15 @@
         </span>test_instantiate_with_msg(
             deps.as_mut(),
             InstantiateMsg {
-                deposit_marker: Denom::new(<span class="string">&quot;denom1&quot;</span>, <span class="number">2</span>),
-                trading_marker: Denom::new(<span class="string">&quot;denom2&quot;</span>, <span class="number">1</span>),
+                deposit_marker: Denom::new(<span class="string">"denom1"</span>, <span class="number">2</span>),
+                trading_marker: Denom::new(<span class="string">"denom2"</span>, <span class="number">1</span>),
                 ..InstantiateMsg::default()
             },
         );
-        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">&quot;sender&quot;</span>, <span class="kw-2">&amp;</span>[]), <span class="number">9</span>)
-            .expect_err(<span class="string">&quot;a conversion that does not produce any trading denom should fail&quot;</span>);
+        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">9</span>)
+            .expect_err(<span class="string">"a conversion that does not produce any trading denom should fail"</span>);
         <span class="kw">let </span>_expected_err =
-            <span class="string">&quot;sent [9denom1], but that is not enough to convert to at least one [denom2]&quot;
+            <span class="string">"sent [9denom1], but that is not enough to convert to at least one [denom2]"
                 </span>.to_string();
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(
@@ -677,7 +679,7 @@
                     message: _expected_err,
                 },
             ),
-            <span class="string">&quot;unexpected error occurred when invalid conversion occurs&quot;</span>,
+            <span class="string">"unexpected error occurred when invalid conversion occurs"</span>,
         );
     }
 
@@ -688,7 +690,7 @@
             <span class="kw-2">&amp;mut </span>querier,
             QueryBalanceResponse {
                 balance: <span class="prelude-val">Some</span>(Coin {
-                    amount: <span class="string">&quot;103&quot;</span>.to_string(),
+                    amount: <span class="string">"103"</span>.to_string(),
                     denom: DEFAULT_DEPOSIT_DENOM_NAME.to_string(),
                 }),
             },
@@ -696,12 +698,12 @@
         QueryAttributesRequest::mock_response(
             <span class="kw-2">&amp;mut </span>querier,
             QueryAttributesResponse {
-                account: <span class="string">&quot;sender&quot;</span>.to_string(),
+                account: <span class="string">"sender"</span>.to_string(),
                 attributes: <span class="macro">vec!</span>[Attribute {
                     name: DEFAULT_REQUIRED_DEPOSIT_ATTRIBUTE.to_string(),
                     value: <span class="macro">vec!</span>[],
                     attribute_type: AttributeType::String <span class="kw">as </span>i32,
-                    address: <span class="string">&quot;addr&quot;</span>.to_string(),
+                    address: <span class="string">"addr"</span>.to_string(),
                 }],
                 pagination: <span class="prelude-val">None</span>,
             },
@@ -720,118 +722,118 @@
                 ..InstantiateMsg::default()
             },
         );
-        <span class="kw">let </span>response = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">&quot;sender&quot;</span>, <span class="kw-2">&amp;</span>[]), <span class="number">103</span>)
-            .expect(<span class="string">&quot;proper circumstances should derive a successful result&quot;</span>);
+        <span class="kw">let </span>response = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">103</span>)
+            .expect(<span class="string">"proper circumstances should derive a successful result"</span>);
         <span class="macro">assert_eq!</span>(
             <span class="number">3</span>,
             response.messages.len(),
-            <span class="string">&quot;expected the response to include three messages&quot;</span>,
+            <span class="string">"expected the response to include three messages"</span>,
         );
         response.messages.iter().for_each(|msg| <span class="kw">match </span><span class="kw-2">&amp;</span>msg.msg {
             CosmosMsg::Stargate { type_url, value } =&gt; <span class="kw">match </span>type_url.as_str() {
-                <span class="string">&quot;/provenance.marker.v1.MsgTransferRequest&quot; </span>=&gt; {
+                <span class="string">"/provenance.marker.v1.MsgTransferRequest" </span>=&gt; {
                     <span class="kw">let </span>req = MsgTransferRequest::try_from(value.to_owned())
-                        .expect(<span class="string">&quot;the value should properly deserialize to a transfer request&quot;</span>);
+                        .expect(<span class="string">"the value should properly deserialize to a transfer request"</span>);
                     <span class="macro">assert_eq!</span>(
                         MOCK_CONTRACT_ADDR,
                         req.administrator,
-                        <span class="string">&quot;the contract address should be set as the administrator of the transfer request&quot;</span>,
+                        <span class="string">"the contract address should be set as the administrator of the transfer request"</span>,
                     );
-                    <span class="kw">let </span>coin = req.amount.expect(<span class="string">&quot;expected the amount to be set on the transfer request&quot;</span>);
+                    <span class="kw">let </span>coin = req.amount.expect(<span class="string">"expected the amount to be set on the transfer request"</span>);
                     <span class="macro">assert_eq!</span>(
                         <span class="number">100</span>.to_string(),
                         coin.amount,
-                        <span class="string">&quot;the correct amount of funds should be taken from the sender&quot;</span>,
+                        <span class="string">"the correct amount of funds should be taken from the sender"</span>,
                     );
                     <span class="macro">assert_eq!</span>(
                         DEFAULT_DEPOSIT_DENOM_NAME,
                         coin.denom,
-                        <span class="string">&quot;the correct denom should be taken from the sender&quot;</span>,
+                        <span class="string">"the correct denom should be taken from the sender"</span>,
                     );
                     <span class="macro">assert_eq!</span>(
-                        <span class="string">&quot;sender&quot;</span>,
+                        <span class="string">"sender"</span>,
                         req.from_address,
-                        <span class="string">&quot;the sender should be the from_address&quot;</span>,
+                        <span class="string">"the sender should be the from_address"</span>,
                     );
                     <span class="macro">assert_eq!</span>(
                         MOCK_CONTRACT_ADDR,
                         req.to_address,
-                        <span class="string">&quot;the contract should be the to_address&quot;</span>,
+                        <span class="string">"the contract should be the to_address"</span>,
                     );
                 }
-                <span class="string">&quot;/provenance.marker.v1.MsgMintRequest&quot; </span>=&gt; {
+                <span class="string">"/provenance.marker.v1.MsgMintRequest" </span>=&gt; {
                     <span class="kw">let </span>req = MsgMintRequest::try_from(value.to_owned())
-                        .expect(<span class="string">&quot;the value should properly deserialize to a mint request&quot;</span>);
+                        .expect(<span class="string">"the value should properly deserialize to a mint request"</span>);
                     <span class="macro">assert_eq!</span>(
                         MOCK_CONTRACT_ADDR,
                         req.administrator,
-                        <span class="string">&quot;the administrator of the mint msg should be the contract&quot;</span>,
+                        <span class="string">"the administrator of the mint msg should be the contract"</span>,
                     );
-                    <span class="kw">let </span>coin = req.amount.expect(<span class="string">&quot;expected the amount to be set on the mint request&quot;</span>);
+                    <span class="kw">let </span>coin = req.amount.expect(<span class="string">"expected the amount to be set on the mint request"</span>);
                     <span class="macro">assert_eq!</span>(
                         <span class="number">10</span>.to_string(),
                         coin.amount,
-                        <span class="string">&quot;the amount minted should equate to the amount after the precision conversion&quot;</span>,
+                        <span class="string">"the amount minted should equate to the amount after the precision conversion"</span>,
                     );
                     <span class="macro">assert_eq!</span>(
                         DEFAULT_TRADING_DENOM_NAME,
                         coin.denom,
-                        <span class="string">&quot;the denom minted should be the trading denom&quot;</span>,
+                        <span class="string">"the denom minted should be the trading denom"</span>,
                     );
                 }
-                <span class="string">&quot;/provenance.marker.v1.MsgWithdrawRequest&quot; </span>=&gt; {
+                <span class="string">"/provenance.marker.v1.MsgWithdrawRequest" </span>=&gt; {
                     <span class="kw">let </span>req = MsgWithdrawRequest::try_from(value.to_owned())
-                        .expect(<span class="string">&quot;expected the msg to be a withdraw request&quot;</span>);
+                        .expect(<span class="string">"expected the msg to be a withdraw request"</span>);
                     <span class="macro">assert_eq!</span>(
                         DEFAULT_TRADING_DENOM_NAME,
                         req.denom,
-                        <span class="string">&quot;the withdraw request should withdraw from the trading marker&quot;</span>,
+                        <span class="string">"the withdraw request should withdraw from the trading marker"</span>,
                     );
                     <span class="macro">assert_eq!</span>(
                         MOCK_CONTRACT_ADDR,
                         req.administrator,
-                        <span class="string">&quot;the withdraw request should use the contract address as the administrator&quot;</span>,
+                        <span class="string">"the withdraw request should use the contract address as the administrator"</span>,
                     );
                     <span class="macro">assert_eq!</span>(
-                        <span class="string">&quot;sender&quot;</span>,
+                        <span class="string">"sender"</span>,
                         req.to_address,
-                        <span class="string">&quot;the withdraw request should send the coin to the sender&quot;</span>,
+                        <span class="string">"the withdraw request should send the coin to the sender"</span>,
                     );
                     <span class="macro">assert_eq!</span>(
                         <span class="number">1</span>,
                         req.amount.len(),
-                        <span class="string">&quot;the amount field should have a single coin&quot;</span>,
+                        <span class="string">"the amount field should have a single coin"</span>,
                     );
                     <span class="kw">let </span>coin = req.amount.first().unwrap();
                     <span class="macro">assert_eq!</span>(
                         <span class="number">10</span>.to_string(),
                         coin.amount,
-                        <span class="string">&quot;the withdrawn amount should be the upconverted denom&quot;</span>,
+                        <span class="string">"the withdrawn amount should be the upconverted denom"</span>,
                     );
                     <span class="macro">assert_eq!</span>(
                         DEFAULT_TRADING_DENOM_NAME,
                         coin.denom,
-                        <span class="string">&quot;the withdrawn denom should be the trading denom&quot;</span>,
+                        <span class="string">"the withdrawn denom should be the trading denom"</span>,
                     );
                 }
-                url =&gt; <span class="macro">panic!</span>(<span class="string">&quot;unexpected type url in emitted msg: {url}&quot;</span>),
+                url =&gt; <span class="macro">panic!</span>(<span class="string">"unexpected type url in emitted msg: {url}"</span>),
             },
-            msg =&gt; <span class="macro">panic!</span>(<span class="string">&quot;unexpected message emitted: {msg:?}&quot;</span>),
+            msg =&gt; <span class="macro">panic!</span>(<span class="string">"unexpected message emitted: {msg:?}"</span>),
         });
         <span class="macro">assert_eq!</span>(
             <span class="number">9</span>,
             response.attributes.len(),
-            <span class="string">&quot;expected nine attributes to be emitted&quot;</span>,
+            <span class="string">"expected nine attributes to be emitted"</span>,
         );
-        response.assert_attribute(<span class="string">&quot;action&quot;</span>, <span class="string">&quot;fund_trading&quot;</span>);
-        response.assert_attribute(<span class="string">&quot;contract_address&quot;</span>, MOCK_CONTRACT_ADDR);
-        response.assert_attribute(<span class="string">&quot;contract_type&quot;</span>, CONTRACT_TYPE);
-        response.assert_attribute(<span class="string">&quot;contract_name&quot;</span>, DEFAULT_CONTRACT_NAME);
-        response.assert_attribute(<span class="string">&quot;deposit_input_denom&quot;</span>, DEFAULT_DEPOSIT_DENOM_NAME);
-        response.assert_attribute(<span class="string">&quot;deposit_requested_amount&quot;</span>, <span class="string">&quot;103&quot;</span>);
-        response.assert_attribute(<span class="string">&quot;deposit_actual_amount&quot;</span>, <span class="string">&quot;100&quot;</span>);
-        response.assert_attribute(<span class="string">&quot;received_denom&quot;</span>, DEFAULT_TRADING_DENOM_NAME);
-        response.assert_attribute(<span class="string">&quot;received_amount&quot;</span>, <span class="string">&quot;10&quot;</span>);
+        response.assert_attribute(<span class="string">"action"</span>, <span class="string">"fund_trading"</span>);
+        response.assert_attribute(<span class="string">"contract_address"</span>, MOCK_CONTRACT_ADDR);
+        response.assert_attribute(<span class="string">"contract_type"</span>, CONTRACT_TYPE);
+        response.assert_attribute(<span class="string">"contract_name"</span>, DEFAULT_CONTRACT_NAME);
+        response.assert_attribute(<span class="string">"deposit_input_denom"</span>, DEFAULT_DEPOSIT_DENOM_NAME);
+        response.assert_attribute(<span class="string">"deposit_requested_amount"</span>, <span class="string">"103"</span>);
+        response.assert_attribute(<span class="string">"deposit_actual_amount"</span>, <span class="string">"100"</span>);
+        response.assert_attribute(<span class="string">"received_denom"</span>, DEFAULT_TRADING_DENOM_NAME);
+        response.assert_attribute(<span class="string">"received_amount"</span>, <span class="string">"10"</span>);
     }
 }
 </code></pre></div></section></main></body></html>

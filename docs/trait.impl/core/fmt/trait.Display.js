@@ -1,3 +1,3 @@
 (function() {var implementors = {
-"funding_trading_bridge_smart_contract":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.75.0/core/fmt/trait.Display.html\" title=\"trait core::fmt::Display\">Display</a> for <a class=\"enum\" href=\"funding_trading_bridge_smart_contract/types/error/enum.ContractError.html\" title=\"enum funding_trading_bridge_smart_contract::types::error::ContractError\">ContractError</a>"]]
+"funding_trading_bridge_smart_contract":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.77.2/core/fmt/trait.Display.html\" title=\"trait core::fmt::Display\">Display</a> for <a class=\"enum\" href=\"funding_trading_bridge_smart_contract/types/error/enum.ContractError.html\" title=\"enum funding_trading_bridge_smart_contract::types::error::ContractError\">ContractError</a>"]]
 };if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

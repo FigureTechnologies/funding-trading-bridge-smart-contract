@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/util/provenance_utils.rs`."><title>provenance_utils.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="funding_trading_bridge_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/util/provenance_utils.rs`."><title>provenance_utils.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="funding_trading_bridge_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../funding_trading_bridge_smart_contract/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -559,7 +561,7 @@
 ///
 /// # Parameters
 /// * `name` The dot-qualified name to use on-chain for name binding. Ex: myname.sc.pb will generate
-/// a msg that binds &quot;myname&quot; to the existing parent name &quot;sc.pb&quot;.
+/// a msg that binds "myname" to the existing parent name "sc.pb".
 /// * `bind_to_address` The bech32 address to which the name will be bound.
 /// * `restricted` If true, the name will be bound as a restricted name, preventing future name
 /// bindings from using it as a parent name.
@@ -569,13 +571,13 @@
     restricted: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;MsgBindNameRequest, ContractError&gt; {
     <span class="kw">let </span>fully_qualified_name = name.into();
-    <span class="kw">let </span><span class="kw-2">mut </span>name_parts = fully_qualified_name.split(<span class="string">&#39;.&#39;</span>).collect::&lt;Vec&lt;<span class="kw-2">&amp;</span>str&gt;&gt;();
+    <span class="kw">let </span><span class="kw-2">mut </span>name_parts = fully_qualified_name.split(<span class="string">'.'</span>).collect::&lt;Vec&lt;<span class="kw-2">&amp;</span>str&gt;&gt;();
     <span class="kw">let </span>bind_address = bind_to_address.into();
     <span class="kw">let </span>bind_record = <span class="kw">if let </span><span class="prelude-val">Some</span>(bind) = name_parts.to_owned().first() {
         <span class="kw">if </span>bind.is_empty() {
             <span class="kw">return </span>ContractError::InvalidFormatError {
                 message: <span class="macro">format!</span>(
-                    <span class="string">&quot;cannot bind to an empty name string [{}]&quot;</span>,
+                    <span class="string">"cannot bind to an empty name string [{}]"</span>,
                     fully_qualified_name
                 ),
             }
@@ -589,7 +591,7 @@
     } <span class="kw">else </span>{
         <span class="kw">return </span>ContractError::InvalidFormatError {
             message: <span class="macro">format!</span>(
-                <span class="string">&quot;cannot derive bind name from input [{}]&quot;</span>,
+                <span class="string">"cannot derive bind name from input [{}]"</span>,
                 fully_qualified_name
             ),
         }
@@ -598,7 +600,7 @@
     <span class="kw">let </span>parent_record = <span class="kw">if </span>name_parts.len() &gt; <span class="number">1 </span>{
         <span class="comment">// Trim the first element, because that is the new name to be bound
         </span>name_parts.remove(<span class="number">0</span>);
-        <span class="kw">let </span>parent_name = name_parts.join(<span class="string">&quot;.&quot;</span>).to_string();
+        <span class="kw">let </span>parent_name = name_parts.join(<span class="string">"."</span>).to_string();
         <span class="prelude-val">Some</span>(NameRecord {
             name: parent_name.to_owned(),
             <span class="comment">// The parent record must also use the address being bound to as its address in order for
@@ -664,7 +666,7 @@
                 )<span class="question-mark">?</span>;
             } <span class="kw">else </span>{
                 <span class="kw">return </span>ContractError::InvalidAccountError {
-                    message: <span class="string">&quot;account does not have all required attributes&quot;</span>.to_string(),
+                    message: <span class="string">"account does not have all required attributes"</span>.to_string(),
                 }
                 .to_err();
             }
@@ -698,7 +700,7 @@
         <span class="kw">if </span>numeric_balance &lt; required_amount {
             ContractError::InvalidAccountError {
                 message: <span class="macro">format!</span>(
-                    <span class="string">&quot;required [{required_amount}], but account only holds [{numeric_balance}]&quot;
+                    <span class="string">"required [{required_amount}], but account only holds [{numeric_balance}]"
                 </span>),
             }
             .to_err()
@@ -707,7 +709,7 @@
         }
     } <span class="kw">else </span>{
         ContractError::InvalidFundsError {
-            message: <span class="macro">format!</span>(<span class="string">&quot;account [{account_address}] has no [{target_denom}] balance&quot;</span>),
+            message: <span class="macro">format!</span>(<span class="string">"account [{account_address}] has no [{target_denom}] balance"</span>),
         }
         .to_err()
     }
@@ -733,7 +735,7 @@
             } <span class="kw">else </span>{
                 ContractError::NotFoundError {
                     message: <span class="macro">format!</span>(
-                        <span class="string">&quot;unable to resolve base account from marker account [{}]&quot;</span>,
+                        <span class="string">"unable to resolve base account from marker account [{}]"</span>,
                         <span class="kw-2">&amp;</span>marker_denom
                     ),
                 }
@@ -741,13 +743,13 @@
             }
         } <span class="kw">else </span>{
             ContractError::NotFoundError {
-                message: <span class="macro">format!</span>(<span class="string">&quot;unable to resolve marker account for denom [{marker_denom}]&quot;</span>),
+                message: <span class="macro">format!</span>(<span class="string">"unable to resolve marker account for denom [{marker_denom}]"</span>),
             }
             .to_err()
         }
     } <span class="kw">else </span>{
         ContractError::NotFoundError {
-            message: <span class="macro">format!</span>(<span class="string">&quot;unable to query marker by name [{}]&quot;</span>, <span class="kw-2">&amp;</span>marker_denom),
+            message: <span class="macro">format!</span>(<span class="string">"unable to query marker by name [{}]"</span>, <span class="kw-2">&amp;</span>marker_denom),
         }
         .to_err()
     }
@@ -776,109 +778,109 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>msg_bind_name_creates_proper_binding_with_fully_qualified_name() {
-        <span class="kw">let </span>name = <span class="string">&quot;test.name.bro&quot;</span>;
-        <span class="kw">let </span>address = <span class="string">&quot;some-address&quot;</span>;
+        <span class="kw">let </span>name = <span class="string">"test.name.bro"</span>;
+        <span class="kw">let </span>address = <span class="string">"some-address"</span>;
         <span class="kw">let </span>msg =
-            msg_bind_name(name, address, <span class="bool-val">true</span>).expect(<span class="string">&quot;valid input should not yield an error&quot;</span>);
-        <span class="kw">let </span>parent = msg.parent.expect(<span class="string">&quot;the result should include a parent msg&quot;</span>);
+            msg_bind_name(name, address, <span class="bool-val">true</span>).expect(<span class="string">"valid input should not yield an error"</span>);
+        <span class="kw">let </span>parent = msg.parent.expect(<span class="string">"the result should include a parent msg"</span>);
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;name.bro&quot;</span>, parent.name,
-            <span class="string">&quot;parent name should be properly derived&quot;</span>,
+            <span class="string">"name.bro"</span>, parent.name,
+            <span class="string">"parent name should be properly derived"</span>,
         );
         <span class="macro">assert_eq!</span>(
             address, parent.address,
-            <span class="string">&quot;parent address value should be set as the bind address because that&#39;s what enables binds to unrestricted parent addresses&quot;</span>,
+            <span class="string">"parent address value should be set as the bind address because that's what enables binds to unrestricted parent addresses"</span>,
         );
         <span class="macro">assert!</span>(
             !parent.restricted,
-            <span class="string">&quot;parent restricted should always be false&quot;</span>,
+            <span class="string">"parent restricted should always be false"</span>,
         );
-        <span class="kw">let </span>bind = msg.record.expect(<span class="string">&quot;the result should include a name record&quot;</span>);
+        <span class="kw">let </span>bind = msg.record.expect(<span class="string">"the result should include a name record"</span>);
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;test&quot;</span>, bind.name,
-            <span class="string">&quot;the bound name should be properly derived&quot;</span>,
+            <span class="string">"test"</span>, bind.name,
+            <span class="string">"the bound name should be properly derived"</span>,
         );
         <span class="macro">assert_eq!</span>(
             address, bind.address,
-            <span class="string">&quot;the bound name should have the specified address&quot;</span>,
+            <span class="string">"the bound name should have the specified address"</span>,
         );
         <span class="macro">assert!</span>(
             bind.restricted,
-            <span class="string">&quot;the restricted value should equate to the value specified&quot;</span>,
+            <span class="string">"the restricted value should equate to the value specified"</span>,
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>msg_bind_name_creates_proper_binding_with_single_node_name() {
-        <span class="kw">let </span>name = <span class="string">&quot;name&quot;</span>;
-        <span class="kw">let </span>address = <span class="string">&quot;address&quot;</span>;
+        <span class="kw">let </span>name = <span class="string">"name"</span>;
+        <span class="kw">let </span>address = <span class="string">"address"</span>;
         <span class="kw">let </span>msg = msg_bind_name(name, address, <span class="bool-val">false</span>)
-            .expect(<span class="string">&quot;proper input should produce a success result&quot;</span>);
+            .expect(<span class="string">"proper input should produce a success result"</span>);
         <span class="macro">assert!</span>(
             msg.parent.is_none(),
-            <span class="string">&quot;the parent record should not be set because the name bind does not require it&quot;</span>,
+            <span class="string">"the parent record should not be set because the name bind does not require it"</span>,
         );
-        <span class="kw">let </span>bind = msg.record.expect(<span class="string">&quot;the result should include a name record&quot;</span>);
+        <span class="kw">let </span>bind = msg.record.expect(<span class="string">"the result should include a name record"</span>);
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;name&quot;</span>, bind.name,
-            <span class="string">&quot;the bound name should be properly derived&quot;</span>,
+            <span class="string">"name"</span>, bind.name,
+            <span class="string">"the bound name should be properly derived"</span>,
         );
         <span class="macro">assert_eq!</span>(
             address, bind.address,
-            <span class="string">&quot;the bound name should have the specified address&quot;</span>,
+            <span class="string">"the bound name should have the specified address"</span>,
         );
         <span class="macro">assert!</span>(
             !bind.restricted,
-            <span class="string">&quot;the restricted value should equate to the value specified&quot;</span>,
+            <span class="string">"the restricted value should equate to the value specified"</span>,
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>msg_bind_name_should_properly_guard_against_bad_input() {
-        <span class="kw">let </span>_expected_error_message = <span class="string">&quot;cannot derive bind name from input []&quot;</span>.to_string();
+        <span class="kw">let </span>_expected_error_message = <span class="string">"cannot derive bind name from input []"</span>.to_string();
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(
-                msg_bind_name(<span class="string">&quot;&quot;</span>, <span class="string">&quot;address&quot;</span>, <span class="bool-val">true</span>)
-                    .expect_err(<span class="string">&quot;an error should occur when no name is specified&quot;</span>),
+                msg_bind_name(<span class="string">""</span>, <span class="string">"address"</span>, <span class="bool-val">true</span>)
+                    .expect_err(<span class="string">"an error should occur when no name is specified"</span>),
                 ContractError::InvalidFormatError {
                     message: _expected_error_message,
                 },
             ),
-            <span class="string">&quot;unexpected error message when specifying an empty name&quot;</span>,
+            <span class="string">"unexpected error message when specifying an empty name"</span>,
         );
-        <span class="kw">let </span>_expected_error_message = <span class="string">&quot;cannot bind to an empty name string [.suffix]&quot;</span>.to_string();
+        <span class="kw">let </span>_expected_error_message = <span class="string">"cannot bind to an empty name string [.suffix]"</span>.to_string();
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(
-                msg_bind_name(<span class="string">&quot;.suffix&quot;</span>, <span class="string">&quot;address&quot;</span>, <span class="bool-val">true</span>)
-                    .expect_err(<span class="string">&quot;an error should occur when specifying a malformed name&quot;</span>),
+                msg_bind_name(<span class="string">".suffix"</span>, <span class="string">"address"</span>, <span class="bool-val">true</span>)
+                    .expect_err(<span class="string">"an error should occur when specifying a malformed name"</span>),
                 ContractError::InvalidFormatError {
                     message: _expected_error_message,
                 },
             ),
-            <span class="string">&quot;unexpected error message when specifying a malformed name&quot;</span>,
+            <span class="string">"unexpected error message when specifying a malformed name"</span>,
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>check_account_has_all_attributes_should_succeed_when_attributes_present() {
         <span class="kw">let </span><span class="kw-2">mut </span>querier = MockProvenanceQuerier::new(<span class="kw-2">&amp;</span>[]);
-        <span class="kw">let </span>account = <span class="string">&quot;account&quot;</span>.to_string();
+        <span class="kw">let </span>account = <span class="string">"account"</span>.to_string();
         QueryAttributesRequest::mock_response(
             <span class="kw-2">&amp;mut </span>querier,
             QueryAttributesResponse {
                 account: account.to_owned(),
                 attributes: <span class="macro">vec!</span>[
                     Attribute {
-                        name: <span class="string">&quot;first&quot;</span>.to_string(),
+                        name: <span class="string">"first"</span>.to_string(),
                         value: <span class="macro">vec!</span>[],
                         attribute_type: AttributeType::String <span class="kw">as </span>i32,
-                        address: <span class="string">&quot;some-addr&quot;</span>.to_string(),
+                        address: <span class="string">"some-addr"</span>.to_string(),
                     },
                     Attribute {
-                        name: <span class="string">&quot;second&quot;</span>.to_string(),
+                        name: <span class="string">"second"</span>.to_string(),
                         value: <span class="macro">vec!</span>[],
                         attribute_type: AttributeType::Json <span class="kw">as </span>i32,
-                        address: <span class="string">&quot;other-addr&quot;</span>.to_string(),
+                        address: <span class="string">"other-addr"</span>.to_string(),
                     },
                 ],
                 pagination: <span class="prelude-val">Some</span>(PageResponse {
@@ -891,24 +893,24 @@
         check_account_has_all_attributes(
             <span class="kw-2">&amp;</span>deps.as_mut(),
             account,
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;first&quot;</span>.to_string(), <span class="string">&quot;second&quot;</span>.to_string()],
+            <span class="kw-2">&amp;</span>[<span class="string">"first"</span>.to_string(), <span class="string">"second"</span>.to_string()],
         )
-        .expect(<span class="string">&quot;when all required attributes are in results, a success should occur&quot;</span>);
+        .expect(<span class="string">"when all required attributes are in results, a success should occur"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>check_account_has_all_attributes_should_fail_when_attributes_missing() {
         <span class="kw">let </span><span class="kw-2">mut </span>querier = MockProvenanceQuerier::new(<span class="kw-2">&amp;</span>[]);
-        <span class="kw">let </span>account = <span class="string">&quot;account&quot;</span>.to_string();
+        <span class="kw">let </span>account = <span class="string">"account"</span>.to_string();
         QueryAttributesRequest::mock_response(
             <span class="kw-2">&amp;mut </span>querier,
             QueryAttributesResponse {
                 account: account.to_owned(),
                 attributes: <span class="macro">vec!</span>[Attribute {
-                    name: <span class="string">&quot;wrong_attribute&quot;</span>.to_string(),
+                    name: <span class="string">"wrong_attribute"</span>.to_string(),
                     value: <span class="macro">vec!</span>[],
                     attribute_type: AttributeType::String <span class="kw">as </span>i32,
-                    address: <span class="string">&quot;some-addr&quot;</span>.to_string(),
+                    address: <span class="string">"some-addr"</span>.to_string(),
                 }],
                 pagination: <span class="prelude-val">Some</span>(PageResponse {
                     next_key: <span class="macro">vec!</span>[],
@@ -920,10 +922,10 @@
         <span class="kw">let </span>error = check_account_has_all_attributes(
             <span class="kw-2">&amp;</span>deps.as_mut(),
             account,
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;right_attribute&quot;</span>.to_string()],
+            <span class="kw-2">&amp;</span>[<span class="string">"right_attribute"</span>.to_string()],
         )
-        .expect_err(<span class="string">&quot;when one or more attributes is missing, an error should occur&quot;</span>);
-        <span class="kw">let </span>_expected_error_message = <span class="string">&quot;account does not have all required attributes&quot;</span>.to_string();
+        .expect_err(<span class="string">"when one or more attributes is missing, an error should occur"</span>);
+        <span class="kw">let </span>_expected_error_message = <span class="string">"account does not have all required attributes"</span>.to_string();
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(
                 error,
@@ -931,7 +933,7 @@
                     message: _expected_error_message,
                 },
             ),
-            <span class="string">&quot;unexpected error occurred when account missing one or more attributes&quot;</span>,
+            <span class="string">"unexpected error occurred when account missing one or more attributes"</span>,
         );
     }
 
@@ -942,19 +944,19 @@
             <span class="kw-2">&amp;mut </span>querier,
             QueryBalanceResponse {
                 balance: <span class="prelude-val">Some</span>(Coin {
-                    amount: <span class="string">&quot;300&quot;</span>.to_string(),
-                    denom: <span class="string">&quot;denom&quot;</span>.to_string(),
+                    amount: <span class="string">"300"</span>.to_string(),
+                    denom: <span class="string">"denom"</span>.to_string(),
                 }),
             },
         );
         <span class="kw">let </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
-        check_account_has_enough_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">&quot;account&quot;</span>, <span class="string">&quot;denom&quot;</span>, <span class="number">300</span>)
-            .expect(<span class="string">&quot;the exact amount required should cause a pass&quot;</span>);
-        check_account_has_enough_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">&quot;account&quot;</span>, <span class="string">&quot;denom&quot;</span>, <span class="number">299</span>)
-            .expect(<span class="string">&quot;having more than the amount required should cause a pass&quot;</span>);
-        <span class="kw">let </span>error = check_account_has_enough_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">&quot;account&quot;</span>, <span class="string">&quot;denom&quot;</span>, <span class="number">301</span>)
-            .expect_err(<span class="string">&quot;having less than the amount required should cause an error&quot;</span>);
-        <span class="kw">let </span>_expected_error_message = <span class="string">&quot;required [301], but account only holds [300]&quot;</span>.to_string();
+        check_account_has_enough_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">"account"</span>, <span class="string">"denom"</span>, <span class="number">300</span>)
+            .expect(<span class="string">"the exact amount required should cause a pass"</span>);
+        check_account_has_enough_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">"account"</span>, <span class="string">"denom"</span>, <span class="number">299</span>)
+            .expect(<span class="string">"having more than the amount required should cause a pass"</span>);
+        <span class="kw">let </span>error = check_account_has_enough_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">"account"</span>, <span class="string">"denom"</span>, <span class="number">301</span>)
+            .expect_err(<span class="string">"having less than the amount required should cause an error"</span>);
+        <span class="kw">let </span>_expected_error_message = <span class="string">"required [301], but account only holds [300]"</span>.to_string();
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(
                 error,
@@ -962,7 +964,7 @@
                     message: _expected_error_message,
                 },
             ),
-            <span class="string">&quot;unexpected error message emitted when too high amount required&quot;</span>,
+            <span class="string">"unexpected error message emitted when too high amount required"</span>,
         );
     }
 
@@ -971,9 +973,9 @@
         <span class="kw">let </span><span class="kw-2">mut </span>querier = MockProvenanceQuerier::new(<span class="kw-2">&amp;</span>[]);
         QueryBalanceRequest::mock_response(<span class="kw-2">&amp;mut </span>querier, QueryBalanceResponse { balance: <span class="prelude-val">None </span>});
         <span class="kw">let </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
-        <span class="kw">let </span>error = check_account_has_enough_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">&quot;account&quot;</span>, <span class="string">&quot;denom&quot;</span>, <span class="number">1</span>)
-            .expect_err(<span class="string">&quot;an error should occur if the response includes no balance&quot;</span>);
-        <span class="kw">let </span>_expected_error_message = <span class="string">&quot;account [account] has no [denom] balance&quot;</span>.to_string();
+        <span class="kw">let </span>error = check_account_has_enough_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">"account"</span>, <span class="string">"denom"</span>, <span class="number">1</span>)
+            .expect_err(<span class="string">"an error should occur if the response includes no balance"</span>);
+        <span class="kw">let </span>_expected_error_message = <span class="string">"account [account] has no [denom] balance"</span>.to_string();
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(
                 error,
@@ -981,7 +983,7 @@
                     message: _expected_error_message,
                 },
             ),
-            <span class="string">&quot;unexpected error message emitted when no balance found&quot;</span>,
+            <span class="string">"unexpected error message emitted when no balance found"</span>,
         );
     }
 
@@ -990,9 +992,9 @@
         <span class="kw">let </span><span class="kw-2">mut </span>querier = MockProvenanceQuerier::new(<span class="kw-2">&amp;</span>[]);
         QueryMarkerRequest::mock_response(<span class="kw-2">&amp;mut </span>querier, QueryMarkerResponse { marker: <span class="prelude-val">None </span>});
         <span class="kw">let </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
-        <span class="kw">let </span>error = get_marker_address_for_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">&quot;marker&quot;</span>)
-            .expect_err(<span class="string">&quot;an error should occur when the marker is not found&quot;</span>);
-        <span class="kw">let </span>_expected_message = <span class="string">&quot;unable to query marker by name [marker]&quot;</span>.to_string();
+        <span class="kw">let </span>error = get_marker_address_for_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">"marker"</span>)
+            .expect_err(<span class="string">"an error should occur when the marker is not found"</span>);
+        <span class="kw">let </span>_expected_message = <span class="string">"unable to query marker by name [marker]"</span>.to_string();
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(
                 error,
@@ -1000,7 +1002,7 @@
                     message: _expected_message
                 },
             ),
-            <span class="string">&quot;unexpected error message emitted when marker missing&quot;</span>,
+            <span class="string">"unexpected error message emitted when marker missing"</span>,
         );
     }
 
@@ -1017,14 +1019,14 @@
             <span class="kw-2">&amp;mut </span>querier,
             QueryMarkerResponse {
                 marker: <span class="prelude-val">Some</span>(Any {
-                    type_url: <span class="string">&quot;/provenance.marker.v1.MarkerAccount&quot;</span>.to_string(),
+                    type_url: <span class="string">"/provenance.marker.v1.MarkerAccount"</span>.to_string(),
                     value: MarkerAccount {
                         base_account: <span class="prelude-val">None</span>,
-                        manager: <span class="string">&quot;some-manager&quot;</span>.to_string(),
+                        manager: <span class="string">"some-manager"</span>.to_string(),
                         access_control: <span class="macro">vec!</span>[],
                         status: MarkerStatus::Active <span class="kw">as </span>i32,
-                        denom: <span class="string">&quot;marker&quot;</span>.to_string(),
-                        supply: <span class="string">&quot;100&quot;</span>.to_string(),
+                        denom: <span class="string">"marker"</span>.to_string(),
+                        supply: <span class="string">"100"</span>.to_string(),
                         marker_type: MarkerType::Restricted <span class="kw">as </span>i32,
                         supply_fixed: <span class="bool-val">false</span>,
                         allow_governance_control: <span class="bool-val">false</span>,
@@ -1036,10 +1038,10 @@
             },
         );
         <span class="kw">let </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
-        <span class="kw">let </span>error = get_marker_address_for_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">&quot;marker&quot;</span>)
-            .expect_err(<span class="string">&quot;an error should occur when the marker is missing a base account&quot;</span>);
+        <span class="kw">let </span>error = get_marker_address_for_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">"marker"</span>)
+            .expect_err(<span class="string">"an error should occur when the marker is missing a base account"</span>);
         <span class="kw">let </span>_expected_message =
-            <span class="string">&quot;unable to resolve base account from marker account [marker]&quot;</span>.to_string();
+            <span class="string">"unable to resolve base account from marker account [marker]"</span>.to_string();
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(
                 error,
@@ -1047,7 +1049,7 @@
                     message: _expected_message
                 },
             ),
-            <span class="string">&quot;unexpected error message emitted when marker account data is invalid&quot;</span>,
+            <span class="string">"unexpected error message emitted when marker account data is invalid"</span>,
         );
     }
 
@@ -1058,19 +1060,19 @@
             <span class="kw-2">&amp;mut </span>querier,
             QueryMarkerResponse {
                 marker: <span class="prelude-val">Some</span>(Any {
-                    type_url: <span class="string">&quot;/provenance.marker.v1.MarkerAccount&quot;</span>.to_string(),
+                    type_url: <span class="string">"/provenance.marker.v1.MarkerAccount"</span>.to_string(),
                     value: MarkerAccount {
                         base_account: <span class="prelude-val">Some</span>(BaseAccount {
-                            address: <span class="string">&quot;marker-address&quot;</span>.to_string(),
+                            address: <span class="string">"marker-address"</span>.to_string(),
                             pub_key: <span class="prelude-val">None</span>,
                             account_number: <span class="number">312</span>,
                             sequence: <span class="number">68</span>,
                         }),
-                        manager: <span class="string">&quot;some-manager&quot;</span>.to_string(),
+                        manager: <span class="string">"some-manager"</span>.to_string(),
                         access_control: <span class="macro">vec!</span>[],
                         status: MarkerStatus::Active <span class="kw">as </span>i32,
-                        denom: <span class="string">&quot;marker&quot;</span>.to_string(),
-                        supply: <span class="string">&quot;100&quot;</span>.to_string(),
+                        denom: <span class="string">"marker"</span>.to_string(),
+                        supply: <span class="string">"100"</span>.to_string(),
                         marker_type: MarkerType::Restricted <span class="kw">as </span>i32,
                         supply_fixed: <span class="bool-val">false</span>,
                         allow_governance_control: <span class="bool-val">false</span>,
@@ -1082,11 +1084,11 @@
             },
         );
         <span class="kw">let </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
-        <span class="kw">let </span>marker_address = get_marker_address_for_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">&quot;marker&quot;</span>)
-            .expect(<span class="string">&quot;a response should be emitted when marker output is properly formed&quot;</span>);
+        <span class="kw">let </span>marker_address = get_marker_address_for_denom(<span class="kw-2">&amp;</span>deps.as_ref(), <span class="string">"marker"</span>)
+            .expect(<span class="string">"a response should be emitted when marker output is properly formed"</span>);
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;marker-address&quot;</span>, marker_address,
-            <span class="string">&quot;the correct marker address should be extracted&quot;</span>,
+            <span class="string">"marker-address"</span>, marker_address,
+            <span class="string">"the correct marker address should be extracted"</span>,
         );
     }
 }
