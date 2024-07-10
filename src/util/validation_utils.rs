@@ -28,6 +28,9 @@ pub fn check_funds_are_empty(info: &MessageInfo) -> Result<(), ContractError> {
 /// - Each segment must be between 2 and 32 characters.
 /// - Each segment must be alphanumeric.
 /// - Each segment can have a single '-' character, or be a valid uuid if it includes '-' characters.
+///
+/// Referenced code (at time of writing): https://github.com/provenance-io/provenance/blob/main/x/name/types/name.go#L82
+/// Referenced documentation describing these requirements (at time of writing): https://github.com/provenance-io/provenance/blob/main/x/name/spec/01_concepts.md
 pub fn validate_attribute_name<S: Into<String>>(name: S) -> Result<(), ContractError> {
     let name = name.into();
     let name_parts = name.split('.').collect::<Vec<&str>>();
@@ -49,8 +52,11 @@ pub fn validate_attribute_name<S: Into<String>>(name: S) -> Result<(), ContractE
         .to_err();
     }
     if name_parts.iter().any(|part| {
+        // A segment is immediately valid if it conforms as a valid UUID
         Uuid::parse_str(part).is_err()
+            // A segment can include only one dash
             && (part.chars().filter(|c| c == &'-').count() > 1
+            // A segment must be fully alphanumeric, barring the single dash allowance
                 || !part
                     .chars()
                     .filter(|c| c != &'-')
