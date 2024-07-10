@@ -93,9 +93,7 @@ pub fn check_account_has_all_attributes<S: Into<String>>(
     let mut remaining_attributes = attributes.to_vec();
     while !remaining_attributes.is_empty() {
         for attr in latest_response.attributes.iter() {
-            if remaining_attributes.contains(&attr.name) {
-                remaining_attributes.retain(|name| name != &attr.name);
-            }
+            remaining_attributes.retain(|name| name != &attr.name);
         }
         if !remaining_attributes.is_empty() {
             if latest_response.pagination.is_some()
