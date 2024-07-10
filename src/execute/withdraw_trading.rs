@@ -32,12 +32,6 @@ pub fn withdraw_trading(
 ) -> Result<Response, ContractError> {
     check_funds_are_empty(&info)?;
     let contract_state = get_contract_state_v1(deps.storage)?;
-    check_account_has_enough_denom(
-        &deps.as_ref(),
-        info.sender.as_str(),
-        &contract_state.trading_marker.name,
-        trade_amount,
-    )?;
     check_account_has_all_attributes(
         &deps,
         &info.sender,
@@ -60,6 +54,12 @@ pub fn withdraw_trading(
         .to_err();
     }
     let collected_amount = trade_amount - conversion.remainder;
+    check_account_has_enough_denom(
+        &deps.as_ref(),
+        info.sender.as_str(),
+        &contract_state.trading_marker.name,
+        collected_amount,
+    )?;
     // Collect the amount to be traded to the contract from the sender and give it directly to the
     // marker in order to stage it for burning
     let collect_funds_msg = MsgTransferRequest {
@@ -180,9 +180,22 @@ mod tests {
                 }),
             },
         );
+        QueryAttributesRequest::mock_response(
+            &mut querier,
+            QueryAttributesResponse {
+                account: "sender".to_string(),
+                attributes: vec![Attribute {
+                    name: DEFAULT_REQUIRED_WITHDRAW_ATTRIBUTE.to_string(),
+                    value: vec![],
+                    attribute_type: AttributeType::Json as i32,
+                    address: "addr".to_string(),
+                }],
+                pagination: None,
+            },
+        );
         let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        let error = withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 11)
+        let error = withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 10000)
             .expect_err("an error should occur when the sender tries to trade more funds than are available to them");
         assert!(
             matches!(error, ContractError::InvalidAccountError { .. }),
@@ -476,5 +489,74 @@ mod tests {
         response.assert_attribute("withdraw_actual_amount", "4320");
         response.assert_attribute("received_denom", DEFAULT_DEPOSIT_DENOM_NAME);
         response.assert_attribute("received_amount", "432");
+    }
+
+    #[test]
+    fn request_that_does_not_need_full_amount_expected_succeeds() {
+        let mut querier = MockProvenanceQuerier::new(&[]);
+        QueryBalanceRequest::mock_response(
+            &mut querier,
+            QueryBalanceResponse {
+                balance: Some(Coin {
+                    amount: "200".to_string(),
+                    denom: DEFAULT_TRADING_DENOM_NAME.to_string(),
+                }),
+            },
+        );
+        QueryAttributesRequest::mock_response(
+            &mut querier,
+            QueryAttributesResponse {
+                account: "sender".to_string(),
+                attributes: vec![Attribute {
+                    name: DEFAULT_REQUIRED_WITHDRAW_ATTRIBUTE.to_string(),
+                    value: vec![],
+                    attribute_type: AttributeType::Json as i32,
+                    address: "addr".to_string(),
+                }],
+                pagination: None,
+            },
+        );
+        QueryMarkerRequest::mock_response(
+            &mut querier,
+            QueryMarkerResponse {
+                marker: Some(Any {
+                    type_url: "/provenance.marker.v1.MarkerAccount".to_string(),
+                    value: MarkerAccount {
+                        base_account: Some(BaseAccount {
+                            address: "trading-marker-addr".to_string(),
+                            pub_key: None,
+                            account_number: 32,
+                            sequence: 37,
+                        }),
+                        manager: "some-manager".to_string(),
+                        access_control: vec![],
+                        status: MarkerStatus::Active as i32,
+                        denom: DEFAULT_TRADING_DENOM_NAME.to_string(),
+                        supply: "10".to_string(),
+                        marker_type: MarkerType::Restricted as i32,
+                        supply_fixed: false,
+                        allow_governance_control: false,
+                        allow_forced_transfer: false,
+                        required_attributes: vec![],
+                    }
+                    .encode_to_vec(),
+                }),
+            },
+        );
+        let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
+        // Setup the trading marker to have a higher precision than the deposit, requiring some
+        // remainder to be returned. Ex:
+        // Sender wants to send 250, which equates to 2.50.  They don't actually have 250, but they
+        // do have 200, which is allowed.  This should be allowed to proceed.
+        test_instantiate_with_msg(
+            deps.as_mut(),
+            InstantiateMsg {
+                deposit_marker: Denom::new(DEFAULT_DEPOSIT_DENOM_NAME, 1),
+                trading_marker: Denom::new(DEFAULT_TRADING_DENOM_NAME, 3),
+                ..InstantiateMsg::default()
+            },
+        );
+        withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 250)
+            .expect("proper circumstances should derive a successful result");
     }
 }

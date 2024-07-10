@@ -34,12 +34,6 @@ pub fn fund_trading(
 ) -> Result<Response, ContractError> {
     check_funds_are_empty(&info)?;
     let contract_state = get_contract_state_v1(deps.storage)?;
-    check_account_has_enough_denom(
-        &deps.as_ref(),
-        info.sender.as_str(),
-        &contract_state.deposit_marker.name,
-        trade_amount,
-    )?;
     check_account_has_all_attributes(
         &deps,
         &info.sender,
@@ -63,6 +57,12 @@ pub fn fund_trading(
     }
     // Transfer the necessary amount from the sender (total amount requested - remainder that cannot be converted)
     let transferred_amount = trade_amount - conversion.remainder;
+    check_account_has_enough_denom(
+        &deps.as_ref(),
+        info.sender.as_str(),
+        &contract_state.deposit_marker.name,
+        transferred_amount,
+    )?;
     let transfer_msg = MsgTransferRequest {
         administrator: env.contract.address.to_string(),
         amount: Some(Coin {
@@ -166,14 +166,27 @@ mod tests {
             &mut querier,
             QueryBalanceResponse {
                 balance: Some(Coin {
-                    amount: "10".to_string(),
+                    amount: "9".to_string(),
                     denom: DEFAULT_DEPOSIT_DENOM_NAME.to_string(),
                 }),
             },
         );
+        QueryAttributesRequest::mock_response(
+            &mut querier,
+            QueryAttributesResponse {
+                account: "sender".to_string(),
+                attributes: vec![Attribute {
+                    name: DEFAULT_REQUIRED_DEPOSIT_ATTRIBUTE.to_string(),
+                    value: vec![],
+                    attribute_type: AttributeType::String as i32,
+                    address: "addr".to_string(),
+                }],
+                pagination: None,
+            },
+        );
         let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        let error = fund_trading(deps.as_mut(), mock_env(), mock_info("some-sender", &[]), 11)
+        let error = fund_trading(deps.as_mut(), mock_env(), mock_info("some-sender", &[]), 10)
             .expect_err("an error should occur when the sender tries to trade more funds than are available to them");
         assert!(
             matches!(error, ContractError::InvalidAccountError { .. }),
@@ -414,5 +427,47 @@ mod tests {
         response.assert_attribute("deposit_actual_amount", "100");
         response.assert_attribute("received_denom", DEFAULT_TRADING_DENOM_NAME);
         response.assert_attribute("received_amount", "10");
+    }
+
+    #[test]
+    fn request_that_does_not_need_full_amount_expected_succeeds() {
+        let mut querier = MockProvenanceQuerier::new(&[]);
+        QueryBalanceRequest::mock_response(
+            &mut querier,
+            QueryBalanceResponse {
+                balance: Some(Coin {
+                    amount: "200".to_string(),
+                    denom: DEFAULT_DEPOSIT_DENOM_NAME.to_string(),
+                }),
+            },
+        );
+        QueryAttributesRequest::mock_response(
+            &mut querier,
+            QueryAttributesResponse {
+                account: "sender".to_string(),
+                attributes: vec![Attribute {
+                    name: DEFAULT_REQUIRED_DEPOSIT_ATTRIBUTE.to_string(),
+                    value: vec![],
+                    attribute_type: AttributeType::String as i32,
+                    address: "addr".to_string(),
+                }],
+                pagination: None,
+            },
+        );
+        let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
+        // Setup the trading marker to have a smaller precision than the deposit, requiring some
+        // remainder to be returned.  Ex:
+        // Sender wants to send 250, which equates to 2.50.  They don't actually have 250, but they
+        // do have 200, which is allowed.  This should be allowed to proceed.
+        test_instantiate_with_msg(
+            deps.as_mut(),
+            InstantiateMsg {
+                deposit_marker: Denom::new(DEFAULT_DEPOSIT_DENOM_NAME, 3),
+                trading_marker: Denom::new(DEFAULT_TRADING_DENOM_NAME, 1),
+                ..InstantiateMsg::default()
+            },
+        );
+        fund_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 250)
+            .expect("proper circumstances should derive a successful result");
     }
 }
