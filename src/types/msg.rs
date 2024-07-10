@@ -1,6 +1,7 @@
 use crate::types::denom::Denom;
 use crate::types::error::ContractError;
 use crate::util::self_validating::SelfValidating;
+use crate::util::validation_utils::validate_attribute_name;
 use cosmwasm_std::Uint128;
 use result_extensions::ResultExtensions;
 use schemars::JsonSchema;
@@ -50,20 +51,20 @@ impl SelfValidating for InstantiateMsg {
         if self
             .required_deposit_attributes
             .iter()
-            .any(|attr| attr.is_empty())
+            .any(|attr| validate_attribute_name(attr).is_err())
         {
             return ContractError::ValidationError {
-                message: "all required deposit attributes must be non-empty values".to_string(),
+                message: "all required deposit attributes must be valid".to_string(),
             }
             .to_err();
         }
         if self
             .required_withdraw_attributes
             .iter()
-            .any(|attr| attr.is_empty())
+            .any(|attr| validate_attribute_name(attr).is_err())
         {
             return ContractError::ValidationError {
-                message: "all required withdraw attributes must be non-empty values".to_string(),
+                message: "all required withdraw attributes must be valid".to_string(),
             }
             .to_err();
         }
@@ -136,17 +137,23 @@ impl SelfValidating for ExecuteMsg {
                 }
             }
             ExecuteMsg::AdminUpdateDepositRequiredAttributes { attributes } => {
-                if attributes.iter().any(|attr| attr.is_empty()) {
+                if attributes
+                    .iter()
+                    .any(|attr| validate_attribute_name(attr).is_err())
+                {
                     return ContractError::ValidationError {
-                        message: "all specified attributes must be non-empty values".to_string(),
+                        message: "all specified attributes must be valid".to_string(),
                     }
                     .to_err();
                 }
             }
             ExecuteMsg::AdminUpdateWithdrawRequiredAttributes { attributes } => {
-                if attributes.iter().any(|attr| attr.is_empty()) {
+                if attributes
+                    .iter()
+                    .any(|attr| validate_attribute_name(attr).is_err())
+                {
                     return ContractError::ValidationError {
-                        message: "all specified attributes must be non-empty values".to_string(),
+                        message: "all specified attributes must be valid".to_string(),
                     }
                     .to_err();
                 }
@@ -250,21 +257,21 @@ mod tests {
         );
         assert_validation_err(
             &InstantiateMsg {
-                required_deposit_attributes: vec!["".to_string()],
+                required_deposit_attributes: vec!["a.aa.b".to_string()],
                 ..InstantiateMsg::default()
             }
             .self_validate()
             .expect_err("expected invalid required deposit attributes to fail"),
-            "all required deposit attributes must be non-empty values",
+            "all required deposit attributes must be valid",
         );
         assert_validation_err(
             &InstantiateMsg {
-                required_withdraw_attributes: vec!["".to_string()],
+                required_withdraw_attributes: vec!["normal.stillnormal.andthen😏".to_string()],
                 ..InstantiateMsg::default()
             }
             .self_validate()
             .expect_err("expected invalid required withdraw attributes to fail"),
-            "all required withdraw attributes must be non-empty values",
+            "all required withdraw attributes must be valid",
         );
         assert_validation_err(
             &InstantiateMsg {
@@ -302,11 +309,13 @@ mod tests {
     ) {
         assert_validation_err(
             &ExecuteMsg::AdminUpdateDepositRequiredAttributes {
-                attributes: vec!["".to_string()],
+                attributes: vec![
+                    "verylongstringintheattributeshouldberejected.thiswouldbeokthough".to_string(),
+                ],
             }
             .self_validate()
             .expect_err("expected invalid attributes to fail"),
-            "all specified attributes must be non-empty values",
+            "all specified attributes must be valid",
         );
         ExecuteMsg::AdminUpdateDepositRequiredAttributes { attributes: vec![] }
             .self_validate()
@@ -323,11 +332,11 @@ mod tests {
     ) {
         assert_validation_err(
             &ExecuteMsg::AdminUpdateWithdrawRequiredAttributes {
-                attributes: vec!["".to_string()],
+                attributes: vec!["not a.validattribute".to_string()],
             }
             .self_validate()
             .expect_err("expected invalid attributes to fail"),
-            "all specified attributes must be non-empty values",
+            "all specified attributes must be valid",
         );
         ExecuteMsg::AdminUpdateWithdrawRequiredAttributes { attributes: vec![] }
             .self_validate()
