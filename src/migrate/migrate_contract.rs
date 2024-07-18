@@ -2,7 +2,7 @@ use crate::store::contract_state::{
     get_contract_state_v1, set_contract_state_v1, ContractStateV1, CONTRACT_TYPE, CONTRACT_VERSION,
 };
 use crate::types::error::ContractError;
-use cosmwasm_std::{to_binary, DepsMut, Response};
+use cosmwasm_std::{to_json_binary, DepsMut, Response};
 use result_extensions::ResultExtensions;
 use semver::Version;
 
@@ -22,7 +22,7 @@ pub fn migrate_contract(deps: DepsMut) -> Result<Response, ContractError> {
     Response::new()
         .add_attribute("action", "migrate")
         .add_attribute("new_version", CONTRACT_VERSION)
-        .set_data(to_binary(&contract_state)?)
+        .set_data(to_json_binary(&contract_state)?)
         .to_ok()
 }
 

@@ -54,8 +54,8 @@ mod tests {
     use crate::test::test_constants::{DEFAULT_ADMIN, DEFAULT_CONTRACT_NAME};
     use crate::test::test_instantiate::test_instantiate;
     use crate::types::error::ContractError;
-    use cosmwasm_std::coins;
-    use cosmwasm_std::testing::{mock_env, mock_info, MOCK_CONTRACT_ADDR};
+    use cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
+    use cosmwasm_std::{coins, Addr};
     use provwasm_mocks::mock_provenance_dependencies;
 
     #[test]
@@ -64,7 +64,7 @@ mod tests {
         let error = admin_update_admin(
             deps.as_mut(),
             mock_env(),
-            mock_info(DEFAULT_ADMIN, &coins(10, "nhash")),
+            message_info(&Addr::unchecked(DEFAULT_ADMIN), &coins(10, "nhash")),
             "test".to_string(),
         )
         .expect_err("an error should occur when funds are provided");
@@ -80,7 +80,7 @@ mod tests {
         let error = admin_update_admin(
             deps.as_mut(),
             mock_env(),
-            mock_info(DEFAULT_ADMIN, &[]),
+            message_info(&Addr::unchecked(DEFAULT_ADMIN), &[]),
             "test".to_string(),
         )
         .expect_err("an error should occur when the contract state is missing");
@@ -98,7 +98,7 @@ mod tests {
         let response = admin_update_admin(
             deps.as_mut(),
             mock_env(),
-            mock_info(DEFAULT_ADMIN, &[]),
+            message_info(&Addr::unchecked(DEFAULT_ADMIN), &[]),
             new_admin.to_owned(),
         )
         .expect("proper input on an instantiated contract should derive a successful response");

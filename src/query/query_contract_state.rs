@@ -1,6 +1,6 @@
 use crate::store::contract_state::get_contract_state_v1;
 use crate::types::error::ContractError;
-use cosmwasm_std::{to_binary, Binary, Deps};
+use cosmwasm_std::{to_json_binary, Binary, Deps};
 use result_extensions::ResultExtensions;
 
 /// Fetches the current values within the [contract state](crate::store::contract_state::ContractStateV1).
@@ -10,7 +10,7 @@ use result_extensions::ResultExtensions;
 /// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
 /// resources like contract internal storage and a querier to retrieve blockchain objects.
 pub fn query_contract_state(deps: Deps) -> Result<Binary, ContractError> {
-    to_binary(&get_contract_state_v1(deps.storage)?)?.to_ok()
+    to_json_binary(&get_contract_state_v1(deps.storage)?)?.to_ok()
 }
 
 #[cfg(test)]

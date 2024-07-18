@@ -79,17 +79,20 @@ pub fn validate_attribute_name<S: Into<String>>(name: S) -> Result<(), ContractE
 #[cfg(test)]
 mod tests {
     use crate::util::validation_utils::{check_funds_are_empty, validate_attribute_name};
-    use cosmwasm_std::testing::mock_info;
-    use cosmwasm_std::{coin, coins};
+    use cosmwasm_std::testing::message_info;
+    use cosmwasm_std::{coin, coins, Addr};
 
     #[test]
     fn test_check_funds_are_empty_cases() {
-        check_funds_are_empty(&mock_info("sender", &[]))
+        check_funds_are_empty(&message_info(&Addr::unchecked("sender"), &[]))
             .expect("empty funds should pass without an error");
-        check_funds_are_empty(&mock_info("sender", &coins(10, "denom")))
-            .expect_err("a single coin should produce an error");
-        check_funds_are_empty(&mock_info(
-            "sender",
+        check_funds_are_empty(&message_info(
+            &Addr::unchecked("sender"),
+            &coins(10, "denom"),
+        ))
+        .expect_err("a single coin should produce an error");
+        check_funds_are_empty(&message_info(
+            &Addr::unchecked("sender"),
             &[coin(1, "denomA"), coin(1, "denomB")],
         ))
         .expect_err("multiple coins should produce an error");

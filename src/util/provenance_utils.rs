@@ -102,12 +102,20 @@ pub fn check_account_has_all_attributes<S: Into<String>>(
                     .clone()
                     .unwrap()
                     .next_key
+                    .clone()
+                    .unwrap()
                     .is_empty()
             {
                 latest_response = querier.attributes(
                     account_addr.to_owned(),
                     Some(PageRequest {
-                        key: latest_response.pagination.unwrap().next_key.to_owned(),
+                        key: latest_response
+                            .pagination
+                            .unwrap()
+                            .next_key
+                            .clone()
+                            .unwrap()
+                            .to_owned(),
                         offset: 0,
                         limit: 25,
                         count_total: false,
@@ -325,16 +333,18 @@ mod tests {
                         value: vec![],
                         attribute_type: AttributeType::String as i32,
                         address: "some-addr".to_string(),
+                        expiration_date: None,
                     },
                     Attribute {
                         name: "second".to_string(),
                         value: vec![],
                         attribute_type: AttributeType::Json as i32,
                         address: "other-addr".to_string(),
+                        expiration_date: None,
                     },
                 ],
                 pagination: Some(PageResponse {
-                    next_key: vec![],
+                    next_key: Some(vec![]),
                     total: 2,
                 }),
             },
@@ -361,9 +371,10 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::String as i32,
                     address: "some-addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: Some(PageResponse {
-                    next_key: vec![],
+                    next_key: Some(vec![]),
                     total: 2,
                 }),
             },
