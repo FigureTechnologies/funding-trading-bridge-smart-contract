@@ -124,7 +124,6 @@ mod tests {
     use crate::types::msg::InstantiateMsg;
     use cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
     use cosmwasm_std::{coins, Addr, AnyMsg, CosmosMsg};
-    use prost::Message;
     use provwasm_mocks::{
         mock_provenance_dependencies, mock_provenance_dependencies_with_custom_querier,
         MockProvenanceQuerier,
@@ -140,7 +139,6 @@ mod tests {
         MarkerAccount, MarkerStatus, MarkerType, MsgBurnRequest, MsgTransferRequest,
         QueryMarkerRequest, QueryMarkerResponse,
     };
-    use schemars::_private::NoSerialize;
 
     #[test]
     fn provided_funds_should_cause_an_error() {
@@ -408,7 +406,7 @@ mod tests {
                         allow_forced_transfer: false,
                         required_attributes: vec![],
                     }
-                    .encode_to_vec(),
+                    .to_proto_bytes(),
                 }),
             },
         );
@@ -570,7 +568,7 @@ mod tests {
                         allow_forced_transfer: false,
                         required_attributes: vec![],
                     }
-                    .encode_to_vec(),
+                    .to_proto_bytes(),
                 }),
             },
         );
