@@ -57,7 +57,7 @@ mod tests {
     use crate::types::msg::InstantiateMsg;
     use crate::util::provenance_utils::msg_bind_name;
     use cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
-    use cosmwasm_std::{coins, Addr, CosmosMsg};
+    use cosmwasm_std::{coins, Addr, AnyMsg, CosmosMsg};
     use provwasm_mocks::mock_provenance_dependencies;
     use provwasm_std::types::provenance::name::v1::MsgBindNameRequest;
 
@@ -134,7 +134,7 @@ mod tests {
         );
         let message = response.messages.first().unwrap();
         match &message.msg {
-            CosmosMsg::Stargate { type_url: _, value } => {
+            CosmosMsg::Any(AnyMsg { type_url: _, value }) => {
                 let expected_name_bind = msg_bind_name("name", MOCK_CONTRACT_ADDR, true)
                     .expect("failed to generate expected msg format");
                 let name_bind = MsgBindNameRequest::try_from(value.to_owned())

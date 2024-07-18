@@ -118,7 +118,7 @@ mod tests {
     use crate::types::error::ContractError;
     use crate::types::msg::InstantiateMsg;
     use cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
-    use cosmwasm_std::{coins, Addr, CosmosMsg};
+    use cosmwasm_std::{coins, Addr, AnyMsg, CosmosMsg};
     use provwasm_mocks::{
         mock_provenance_dependencies, mock_provenance_dependencies_with_custom_querier,
         MockProvenanceQuerier,
@@ -346,7 +346,7 @@ mod tests {
             "expected the response to include three messages",
         );
         response.messages.iter().for_each(|msg| match &msg.msg {
-            CosmosMsg::Stargate { type_url, value } => match type_url.as_str() {
+            CosmosMsg::Any(AnyMsg { type_url, value }) => match type_url.as_str() {
                 "/provenance.marker.v1.MsgTransferRequest" => {
                     let req = MsgTransferRequest::try_from(value.to_owned())
                         .expect("the value should properly deserialize to a transfer request");
