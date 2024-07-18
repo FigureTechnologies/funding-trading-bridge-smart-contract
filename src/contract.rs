@@ -59,7 +59,7 @@ pub fn execute(
     msg.self_validate()?;
     match msg {
         ExecuteMsg::AdminUpdateAdmin { new_admin_address } => {
-            admin_update_admin(deps, None, env, info, new_admin_address)
+            admin_update_admin(deps, env, info, new_admin_address)
         }
         ExecuteMsg::AdminUpdateDepositRequiredAttributes { attributes } => {
             admin_update_deposit_required_attributes(deps, env, info, attributes)

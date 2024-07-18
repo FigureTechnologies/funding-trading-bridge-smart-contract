@@ -20,7 +20,6 @@ use result_extensions::ResultExtensions;
 /// upon successful invocation of this function.
 pub fn admin_update_admin(
     deps: DepsMut,
-    provided_api: Option<&dyn Api>,
     env: Env,
     info: MessageInfo,
     new_admin_address: String,
@@ -34,9 +33,7 @@ pub fn admin_update_admin(
         .to_err();
     }
     let previous_admin_addr = contract_state.admin.to_owned();
-    let new_admin_addr = provided_api
-        .unwrap_or(deps.api)
-        .addr_validate(new_admin_address.as_str())?;
+    let new_admin_addr = deps.api.addr_validate(new_admin_address.as_str())?;
     contract_state.admin = new_admin_addr;
     set_contract_state_v1(deps.storage, &contract_state)?;
     Response::new()
@@ -66,7 +63,6 @@ mod tests {
         let mut deps = mock_provenance_dependencies();
         let error = admin_update_admin(
             deps.as_mut(),
-            Some(&MockApi::default().with_prefix("tp")),
             mock_env(),
             message_info(&Addr::unchecked(DEFAULT_ADMIN), &coins(10, "nhash")),
             "test".to_string(),
@@ -83,7 +79,6 @@ mod tests {
         let mut deps = mock_provenance_dependencies();
         let error = admin_update_admin(
             deps.as_mut(),
-            Some(&MockApi::default().with_prefix("tp")),
             mock_env(),
             message_info(&Addr::unchecked(DEFAULT_ADMIN), &[]),
             "test".to_string(),
@@ -98,12 +93,11 @@ mod tests {
     #[test]
     fn successful_input_should_derive_a_response() {
         let mut deps = mock_provenance_dependencies();
-        deps.api.with_prefix("tp");
+        deps.api = deps.api.with_prefix("tp");
         test_instantiate(deps.as_mut());
         let new_admin = "tp1adaaddt7r2agqfje9f8ysu8d5v85kqrv3qdeyn".to_string();
         let response = admin_update_admin(
             deps.as_mut(),
-            Some(&MockApi::default().with_prefix("tp")),
             mock_env(),
             message_info(&Addr::unchecked(DEFAULT_ADMIN), &[]),
             new_admin.to_owned(),
