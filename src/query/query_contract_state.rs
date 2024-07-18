@@ -18,7 +18,7 @@ mod tests {
     use crate::query::query_contract_state::query_contract_state;
     use crate::store::contract_state::{get_contract_state_v1, ContractStateV1};
     use crate::test::test_instantiate::test_instantiate;
-    use cosmwasm_std::from_binary;
+    use cosmwasm_std::from_json;
     use provwasm_mocks::mock_provenance_dependencies;
 
     #[test]
@@ -36,7 +36,7 @@ mod tests {
             .expect("contract state should load after instantiation");
         let state_from_query = query_contract_state(deps.as_ref())
             .expect("contract state binary should load from query");
-        let state_from_query = from_binary::<ContractStateV1>(&state_from_query)
+        let state_from_query = from_json::<ContractStateV1>(&state_from_query)
             .expect("contract state binary should properly deserialize");
         assert_eq!(
             expected_state, state_from_query,
