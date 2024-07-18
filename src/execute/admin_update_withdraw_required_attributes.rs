@@ -68,8 +68,8 @@ mod tests {
     use crate::test::test_instantiate::test_instantiate_with_msg;
     use crate::types::error::ContractError;
     use crate::types::msg::InstantiateMsg;
-    use cosmwasm_std::coins;
-    use cosmwasm_std::testing::{mock_env, mock_info, MOCK_CONTRACT_ADDR};
+    use cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
+    use cosmwasm_std::{coins, Addr};
     use provwasm_mocks::mock_provenance_dependencies;
 
     #[test]
@@ -78,7 +78,10 @@ mod tests {
         let error = admin_update_withdraw_required_attributes(
             deps.as_mut(),
             mock_env(),
-            mock_info(DEFAULT_ADMIN, &coins(123, "countingcoins")),
+            message_info(
+                &Addr::unchecked(DEFAULT_ADMIN),
+                &coins(123, "countingcoins"),
+            ),
             vec![],
         )
         .expect_err("an error should occur when funds are provided");
@@ -94,7 +97,7 @@ mod tests {
         let error = admin_update_withdraw_required_attributes(
             deps.as_mut(),
             mock_env(),
-            mock_info(DEFAULT_ADMIN, &[]),
+            message_info(&Addr::unchecked(DEFAULT_ADMIN), &[]),
             vec![],
         )
         .expect_err("an error should occur when the contract state is missing");
@@ -156,7 +159,7 @@ mod tests {
         let response = admin_update_withdraw_required_attributes(
             deps.as_mut(),
             mock_env(),
-            mock_info(DEFAULT_ADMIN, &[]),
+            message_info(&Addr::unchecked(DEFAULT_ADMIN), &[]),
             new_attributes,
         )
         .unwrap_or_else(|_| {

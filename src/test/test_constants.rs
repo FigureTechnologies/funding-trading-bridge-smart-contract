@@ -1,4 +1,4 @@
-pub const DEFAULT_ADMIN: &str = "contract-admin";
+pub const DEFAULT_ADMIN: &str = "tp1gna9jd0f6sl5fm66kutc5mq9h7rdvrtdjmclm2";
 pub const DEFAULT_CONTRACT_NAME: &str = "contract-name";
 pub const DEFAULT_DEPOSIT_DENOM_NAME: &str = "deposit";
 pub const DEFAULT_DEPOSIT_DENOM_PRECISION: u64 = 2;

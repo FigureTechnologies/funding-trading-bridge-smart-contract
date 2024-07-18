@@ -117,8 +117,8 @@ mod tests {
     use crate::types::denom::Denom;
     use crate::types::error::ContractError;
     use crate::types::msg::InstantiateMsg;
-    use cosmwasm_std::testing::{mock_env, mock_info, MOCK_CONTRACT_ADDR};
-    use cosmwasm_std::{coins, CosmosMsg};
+    use cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
+    use cosmwasm_std::{coins, Addr, AnyMsg, CosmosMsg};
     use provwasm_mocks::{
         mock_provenance_dependencies, mock_provenance_dependencies_with_custom_querier,
         MockProvenanceQuerier,
@@ -138,7 +138,7 @@ mod tests {
         let error = fund_trading(
             deps.as_mut(),
             mock_env(),
-            mock_info("some-sender", &coins(10, "nhash")),
+            message_info(&Addr::unchecked("some-sender"), &coins(10, "nhash")),
             10,
         )
         .expect_err("an error should be emitted when coin is provided");
@@ -151,8 +151,13 @@ mod tests {
     #[test]
     fn missing_contract_state_should_cause_an_error() {
         let mut deps = mock_provenance_dependencies();
-        let error = fund_trading(deps.as_mut(), mock_env(), mock_info("some-sender", &[]), 10)
-            .expect_err("an error should be emitted when no contract state exists");
+        let error = fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("some-sender"), &[]),
+            10,
+        )
+        .expect_err("an error should be emitted when no contract state exists");
         assert!(
             matches!(error, ContractError::StorageError { .. },),
             "unexpected error type encountered when no contract storage exists",
@@ -180,13 +185,14 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::String as i32,
                     address: "addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: None,
             },
         );
         let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        let error = fund_trading(deps.as_mut(), mock_env(), mock_info("some-sender", &[]), 10)
+        let error = fund_trading(deps.as_mut(), mock_env(), message_info(&Addr::unchecked("some-sender"), &[]), 10)
             .expect_err("an error should occur when the sender tries to trade more funds than are available to them");
         assert!(
             matches!(error, ContractError::InvalidAccountError { .. }),
@@ -216,8 +222,13 @@ mod tests {
         );
         let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        let error = fund_trading(deps.as_mut(), mock_env(), mock_info("some-sender", &[]), 10)
-            .expect_err("an error should occur when the sender does not have a required attribute");
+        let error = fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("some-sender"), &[]),
+            10,
+        )
+        .expect_err("an error should occur when the sender does not have a required attribute");
         assert!(
             matches!(error, ContractError::InvalidAccountError { .. },),
             "unexpected error when account is missing required attributes",
@@ -245,6 +256,7 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::String as i32,
                     address: "addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: None,
             },
@@ -260,8 +272,13 @@ mod tests {
                 ..InstantiateMsg::default()
             },
         );
-        let error = fund_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 9)
-            .expect_err("a conversion that does not produce any trading denom should fail");
+        let error = fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("sender"), &[]),
+            9,
+        )
+        .expect_err("a conversion that does not produce any trading denom should fail");
         let _expected_err =
             "sent [9denom1], but that is not enough to convert to at least one [denom2]"
                 .to_string();
@@ -297,6 +314,7 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::String as i32,
                     address: "addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: None,
             },
@@ -315,15 +333,20 @@ mod tests {
                 ..InstantiateMsg::default()
             },
         );
-        let response = fund_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 103)
-            .expect("proper circumstances should derive a successful result");
+        let response = fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("sender"), &[]),
+            103,
+        )
+        .expect("proper circumstances should derive a successful result");
         assert_eq!(
             3,
             response.messages.len(),
             "expected the response to include three messages",
         );
         response.messages.iter().for_each(|msg| match &msg.msg {
-            CosmosMsg::Stargate { type_url, value } => match type_url.as_str() {
+            CosmosMsg::Any(AnyMsg { type_url, value }) => match type_url.as_str() {
                 "/provenance.marker.v1.MsgTransferRequest" => {
                     let req = MsgTransferRequest::try_from(value.to_owned())
                         .expect("the value should properly deserialize to a transfer request");
@@ -450,6 +473,7 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::String as i32,
                     address: "addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: None,
             },
@@ -467,7 +491,12 @@ mod tests {
                 ..InstantiateMsg::default()
             },
         );
-        fund_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 250)
-            .expect("proper circumstances should derive a successful result");
+        fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("sender"), &[]),
+            250,
+        )
+        .expect("proper circumstances should derive a successful result");
     }
 }

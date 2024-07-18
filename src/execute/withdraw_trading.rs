@@ -122,9 +122,8 @@ mod tests {
     use crate::types::denom::Denom;
     use crate::types::error::ContractError;
     use crate::types::msg::InstantiateMsg;
-    use cosmwasm_std::testing::{mock_env, mock_info, MOCK_CONTRACT_ADDR};
-    use cosmwasm_std::{coins, CosmosMsg};
-    use prost::Message;
+    use cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
+    use cosmwasm_std::{coins, Addr, AnyMsg, CosmosMsg};
     use provwasm_mocks::{
         mock_provenance_dependencies, mock_provenance_dependencies_with_custom_querier,
         MockProvenanceQuerier,
@@ -147,7 +146,7 @@ mod tests {
         let error = withdraw_trading(
             deps.as_mut(),
             mock_env(),
-            mock_info("sender", &coins(10, "somecoin")),
+            message_info(&Addr::unchecked("sender"), &coins(10, "somecoin")),
             10,
         )
         .expect_err("an error should be emitted when coin is provided");
@@ -160,8 +159,13 @@ mod tests {
     #[test]
     fn missing_contract_state_should_cause_an_error() {
         let mut deps = mock_provenance_dependencies();
-        let error = withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 10)
-            .expect_err("an error should be emitted when no contract state exists");
+        let error = withdraw_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("sender"), &[]),
+            10,
+        )
+        .expect_err("an error should be emitted when no contract state exists");
         assert!(
             matches!(error, ContractError::StorageError { .. }),
             "unexpected error type encountered when no contract storage exists",
@@ -189,13 +193,14 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::Json as i32,
                     address: "addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: None,
             },
         );
         let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        let error = withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 10000)
+        let error = withdraw_trading(deps.as_mut(), mock_env(), message_info(&Addr::unchecked("sender"), &[]), 10000)
             .expect_err("an error should occur when the sender tries to trade more funds than are available to them");
         assert!(
             matches!(error, ContractError::InvalidAccountError { .. }),
@@ -225,8 +230,13 @@ mod tests {
         );
         let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        let error = withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 10)
-            .expect_err("an error should occur when the sender does not have a required attribute");
+        let error = withdraw_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("sender"), &[]),
+            10,
+        )
+        .expect_err("an error should occur when the sender does not have a required attribute");
         assert!(
             matches!(error, ContractError::InvalidAccountError { .. }),
             "unexpected error when account is missing required attribute",
@@ -254,6 +264,7 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::Json as i32,
                     address: "addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: None,
             },
@@ -270,8 +281,13 @@ mod tests {
                 ..InstantiateMsg::default()
             },
         );
-        let error = withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 7)
-            .expect_err("a conversion that does not produce any deposit denom should fail");
+        let error = withdraw_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("sender"), &[]),
+            7,
+        )
+        .expect_err("a conversion that does not produce any deposit denom should fail");
         let _expected_err =
             "sent [7denom2], but that is not enough to convert to at least one [denom1]"
                 .to_string();
@@ -307,6 +323,7 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::Json as i32,
                     address: "addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: None,
             },
@@ -321,8 +338,13 @@ mod tests {
                 ..InstantiateMsg::default()
             },
         );
-        let error = withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 1)
-            .expect_err("a missing trading marker should cause a failure");
+        let error = withdraw_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("sender"), &[]),
+            1,
+        )
+        .expect_err("a missing trading marker should cause a failure");
         let _expected_err = "unable to query marker by name [denom2]".to_string();
         assert!(
             matches!(
@@ -356,6 +378,7 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::Json as i32,
                     address: "addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: None,
             },
@@ -383,7 +406,7 @@ mod tests {
                         allow_forced_transfer: false,
                         required_attributes: vec![],
                     }
-                    .encode_to_vec(),
+                    .to_proto_bytes(),
                 }),
             },
         );
@@ -401,15 +424,20 @@ mod tests {
                 ..InstantiateMsg::default()
             },
         );
-        let response = withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 4321)
-            .expect("proper circumstances should derive a successful result");
+        let response = withdraw_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("sender"), &[]),
+            4321,
+        )
+        .expect("proper circumstances should derive a successful result");
         assert_eq!(
             3,
             response.messages.len(),
             "expected the response to include three messages",
         );
         response.messages.iter().for_each(|msg| match &msg.msg {
-            CosmosMsg::Stargate { type_url, value } => match type_url.as_str() {
+            CosmosMsg::Any(AnyMsg { type_url, value }) => match type_url.as_str() {
                 "/provenance.marker.v1.MsgTransferRequest" => {
                     let req = MsgTransferRequest::try_from(value.to_owned())
                         .expect("the transfer request msg should properly deserialize");
@@ -512,6 +540,7 @@ mod tests {
                     value: vec![],
                     attribute_type: AttributeType::Json as i32,
                     address: "addr".to_string(),
+                    expiration_date: None,
                 }],
                 pagination: None,
             },
@@ -539,7 +568,7 @@ mod tests {
                         allow_forced_transfer: false,
                         required_attributes: vec![],
                     }
-                    .encode_to_vec(),
+                    .to_proto_bytes(),
                 }),
             },
         );
@@ -556,7 +585,12 @@ mod tests {
                 ..InstantiateMsg::default()
             },
         );
-        withdraw_trading(deps.as_mut(), mock_env(), mock_info("sender", &[]), 250)
-            .expect("proper circumstances should derive a successful result");
+        withdraw_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(&Addr::unchecked("sender"), &[]),
+            250,
+        )
+        .expect("proper circumstances should derive a successful result");
     }
 }
