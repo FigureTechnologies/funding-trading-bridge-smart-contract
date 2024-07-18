@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/execute/fund_trading.rs`."><title>fund_trading.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="funding_trading_bridge_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../funding_trading_bridge_smart_contract/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/execute/fund_trading.rs`."><title>fund_trading.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="funding_trading_bridge_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../funding_trading_bridge_smart_contract/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -418,6 +416,90 @@
 <a href="#416" id="416">416</a>
 <a href="#417" id="417">417</a>
 <a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::store::contract_state::{get_contract_state_v1, CONTRACT_TYPE};
 <span class="kw">use </span><span class="kw">crate</span>::types::error::ContractError;
 <span class="kw">use </span><span class="kw">crate</span>::util::conversion_utils::convert_denom;
@@ -454,12 +536,6 @@
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Response, ContractError&gt; {
     check_funds_are_empty(<span class="kw-2">&amp;</span>info)<span class="question-mark">?</span>;
     <span class="kw">let </span>contract_state = get_contract_state_v1(deps.storage)<span class="question-mark">?</span>;
-    check_account_has_enough_denom(
-        <span class="kw-2">&amp;</span>deps.as_ref(),
-        info.sender.as_str(),
-        <span class="kw-2">&amp;</span>contract_state.deposit_marker.name,
-        trade_amount,
-    )<span class="question-mark">?</span>;
     check_account_has_all_attributes(
         <span class="kw-2">&amp;</span>deps,
         <span class="kw-2">&amp;</span>info.sender,
@@ -483,6 +559,12 @@
     }
     <span class="comment">// Transfer the necessary amount from the sender (total amount requested - remainder that cannot be converted)
     </span><span class="kw">let </span>transferred_amount = trade_amount - conversion.remainder;
+    check_account_has_enough_denom(
+        <span class="kw-2">&amp;</span>deps.as_ref(),
+        info.sender.as_str(),
+        <span class="kw-2">&amp;</span>contract_state.deposit_marker.name,
+        transferred_amount,
+    )<span class="question-mark">?</span>;
     <span class="kw">let </span>transfer_msg = MsgTransferRequest {
         administrator: env.contract.address.to_string(),
         amount: <span class="prelude-val">Some</span>(Coin {
@@ -537,8 +619,8 @@
     <span class="kw">use </span><span class="kw">crate</span>::types::denom::Denom;
     <span class="kw">use </span><span class="kw">crate</span>::types::error::ContractError;
     <span class="kw">use </span><span class="kw">crate</span>::types::msg::InstantiateMsg;
-    <span class="kw">use </span>cosmwasm_std::testing::{mock_env, mock_info, MOCK_CONTRACT_ADDR};
-    <span class="kw">use </span>cosmwasm_std::{coins, CosmosMsg};
+    <span class="kw">use </span>cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
+    <span class="kw">use </span>cosmwasm_std::{coins, Addr, AnyMsg, CosmosMsg};
     <span class="kw">use </span>provwasm_mocks::{
         mock_provenance_dependencies, mock_provenance_dependencies_with_custom_querier,
         MockProvenanceQuerier,
@@ -558,7 +640,7 @@
         <span class="kw">let </span>error = fund_trading(
             deps.as_mut(),
             mock_env(),
-            mock_info(<span class="string">"some-sender"</span>, <span class="kw-2">&amp;</span>coins(<span class="number">10</span>, <span class="string">"nhash"</span>)),
+            message_info(<span class="kw-2">&amp;</span>Addr::unchecked(<span class="string">"some-sender"</span>), <span class="kw-2">&amp;</span>coins(<span class="number">10</span>, <span class="string">"nhash"</span>)),
             <span class="number">10</span>,
         )
         .expect_err(<span class="string">"an error should be emitted when coin is provided"</span>);
@@ -571,8 +653,13 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>missing_contract_state_should_cause_an_error() {
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
-        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"some-sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">10</span>)
-            .expect_err(<span class="string">"an error should be emitted when no contract state exists"</span>);
+        <span class="kw">let </span>error = fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(<span class="kw-2">&amp;</span>Addr::unchecked(<span class="string">"some-sender"</span>), <span class="kw-2">&amp;</span>[]),
+            <span class="number">10</span>,
+        )
+        .expect_err(<span class="string">"an error should be emitted when no contract state exists"</span>);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(error, ContractError::StorageError { .. },),
             <span class="string">"unexpected error type encountered when no contract storage exists"</span>,
@@ -586,14 +673,28 @@
             <span class="kw-2">&amp;mut </span>querier,
             QueryBalanceResponse {
                 balance: <span class="prelude-val">Some</span>(Coin {
-                    amount: <span class="string">"10"</span>.to_string(),
+                    amount: <span class="string">"9"</span>.to_string(),
                     denom: DEFAULT_DEPOSIT_DENOM_NAME.to_string(),
                 }),
             },
         );
+        QueryAttributesRequest::mock_response(
+            <span class="kw-2">&amp;mut </span>querier,
+            QueryAttributesResponse {
+                account: <span class="string">"sender"</span>.to_string(),
+                attributes: <span class="macro">vec!</span>[Attribute {
+                    name: DEFAULT_REQUIRED_DEPOSIT_ATTRIBUTE.to_string(),
+                    value: <span class="macro">vec!</span>[],
+                    attribute_type: AttributeType::String <span class="kw">as </span>i32,
+                    address: <span class="string">"addr"</span>.to_string(),
+                    expiration_date: <span class="prelude-val">None</span>,
+                }],
+                pagination: <span class="prelude-val">None</span>,
+            },
+        );
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"some-sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">11</span>)
+        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), message_info(<span class="kw-2">&amp;</span>Addr::unchecked(<span class="string">"some-sender"</span>), <span class="kw-2">&amp;</span>[]), <span class="number">10</span>)
             .expect_err(<span class="string">"an error should occur when the sender tries to trade more funds than are available to them"</span>);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(error, ContractError::InvalidAccountError { .. }),
@@ -623,8 +724,13 @@
         );
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
         test_instantiate(deps.as_mut());
-        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"some-sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">10</span>)
-            .expect_err(<span class="string">"an error should occur when the sender does not have a required attribute"</span>);
+        <span class="kw">let </span>error = fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(<span class="kw-2">&amp;</span>Addr::unchecked(<span class="string">"some-sender"</span>), <span class="kw-2">&amp;</span>[]),
+            <span class="number">10</span>,
+        )
+        .expect_err(<span class="string">"an error should occur when the sender does not have a required attribute"</span>);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(error, ContractError::InvalidAccountError { .. },),
             <span class="string">"unexpected error when account is missing required attributes"</span>,
@@ -652,6 +758,7 @@
                     value: <span class="macro">vec!</span>[],
                     attribute_type: AttributeType::String <span class="kw">as </span>i32,
                     address: <span class="string">"addr"</span>.to_string(),
+                    expiration_date: <span class="prelude-val">None</span>,
                 }],
                 pagination: <span class="prelude-val">None</span>,
             },
@@ -667,8 +774,13 @@
                 ..InstantiateMsg::default()
             },
         );
-        <span class="kw">let </span>error = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">9</span>)
-            .expect_err(<span class="string">"a conversion that does not produce any trading denom should fail"</span>);
+        <span class="kw">let </span>error = fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(<span class="kw-2">&amp;</span>Addr::unchecked(<span class="string">"sender"</span>), <span class="kw-2">&amp;</span>[]),
+            <span class="number">9</span>,
+        )
+        .expect_err(<span class="string">"a conversion that does not produce any trading denom should fail"</span>);
         <span class="kw">let </span>_expected_err =
             <span class="string">"sent [9denom1], but that is not enough to convert to at least one [denom2]"
                 </span>.to_string();
@@ -704,6 +816,7 @@
                     value: <span class="macro">vec!</span>[],
                     attribute_type: AttributeType::String <span class="kw">as </span>i32,
                     address: <span class="string">"addr"</span>.to_string(),
+                    expiration_date: <span class="prelude-val">None</span>,
                 }],
                 pagination: <span class="prelude-val">None</span>,
             },
@@ -722,15 +835,20 @@
                 ..InstantiateMsg::default()
             },
         );
-        <span class="kw">let </span>response = fund_trading(deps.as_mut(), mock_env(), mock_info(<span class="string">"sender"</span>, <span class="kw-2">&amp;</span>[]), <span class="number">103</span>)
-            .expect(<span class="string">"proper circumstances should derive a successful result"</span>);
+        <span class="kw">let </span>response = fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(<span class="kw-2">&amp;</span>Addr::unchecked(<span class="string">"sender"</span>), <span class="kw-2">&amp;</span>[]),
+            <span class="number">103</span>,
+        )
+        .expect(<span class="string">"proper circumstances should derive a successful result"</span>);
         <span class="macro">assert_eq!</span>(
             <span class="number">3</span>,
             response.messages.len(),
             <span class="string">"expected the response to include three messages"</span>,
         );
         response.messages.iter().for_each(|msg| <span class="kw">match </span><span class="kw-2">&amp;</span>msg.msg {
-            CosmosMsg::Stargate { type_url, value } =&gt; <span class="kw">match </span>type_url.as_str() {
+            CosmosMsg::Any(AnyMsg { type_url, value }) =&gt; <span class="kw">match </span>type_url.as_str() {
                 <span class="string">"/provenance.marker.v1.MsgTransferRequest" </span>=&gt; {
                     <span class="kw">let </span>req = MsgTransferRequest::try_from(value.to_owned())
                         .expect(<span class="string">"the value should properly deserialize to a transfer request"</span>);
@@ -834,6 +952,54 @@
         response.assert_attribute(<span class="string">"deposit_actual_amount"</span>, <span class="string">"100"</span>);
         response.assert_attribute(<span class="string">"received_denom"</span>, DEFAULT_TRADING_DENOM_NAME);
         response.assert_attribute(<span class="string">"received_amount"</span>, <span class="string">"10"</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>request_that_does_not_need_full_amount_expected_succeeds() {
+        <span class="kw">let </span><span class="kw-2">mut </span>querier = MockProvenanceQuerier::new(<span class="kw-2">&amp;</span>[]);
+        QueryBalanceRequest::mock_response(
+            <span class="kw-2">&amp;mut </span>querier,
+            QueryBalanceResponse {
+                balance: <span class="prelude-val">Some</span>(Coin {
+                    amount: <span class="string">"200"</span>.to_string(),
+                    denom: DEFAULT_DEPOSIT_DENOM_NAME.to_string(),
+                }),
+            },
+        );
+        QueryAttributesRequest::mock_response(
+            <span class="kw-2">&amp;mut </span>querier,
+            QueryAttributesResponse {
+                account: <span class="string">"sender"</span>.to_string(),
+                attributes: <span class="macro">vec!</span>[Attribute {
+                    name: DEFAULT_REQUIRED_DEPOSIT_ATTRIBUTE.to_string(),
+                    value: <span class="macro">vec!</span>[],
+                    attribute_type: AttributeType::String <span class="kw">as </span>i32,
+                    address: <span class="string">"addr"</span>.to_string(),
+                    expiration_date: <span class="prelude-val">None</span>,
+                }],
+                pagination: <span class="prelude-val">None</span>,
+            },
+        );
+        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies_with_custom_querier(querier);
+        <span class="comment">// Setup the trading marker to have a smaller precision than the deposit, requiring some
+        // remainder to be returned.  Ex:
+        // Sender wants to send 250, which equates to 2.50.  They don't actually have 250, but they
+        // do have 200, which is allowed.  This should be allowed to proceed.
+        </span>test_instantiate_with_msg(
+            deps.as_mut(),
+            InstantiateMsg {
+                deposit_marker: Denom::new(DEFAULT_DEPOSIT_DENOM_NAME, <span class="number">3</span>),
+                trading_marker: Denom::new(DEFAULT_TRADING_DENOM_NAME, <span class="number">1</span>),
+                ..InstantiateMsg::default()
+            },
+        );
+        fund_trading(
+            deps.as_mut(),
+            mock_env(),
+            message_info(<span class="kw-2">&amp;</span>Addr::unchecked(<span class="string">"sender"</span>), <span class="kw-2">&amp;</span>[]),
+            <span class="number">250</span>,
+        )
+        .expect(<span class="string">"proper circumstances should derive a successful result"</span>);
     }
 }
 </code></pre></div></section></main></body></html>
