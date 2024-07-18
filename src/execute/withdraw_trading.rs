@@ -388,8 +388,9 @@ mod tests {
         QueryMarkerRequest::mock_response(
             &mut querier,
             QueryMarkerResponse {
-                marker: Some(Any::from(
-                    MarkerAccount {
+                marker: Some(Any {
+                    type_url: "/provenance.marker.v1.MarkerAccount".to_string(),
+                    value: MarkerAccount {
                         base_account: Some(BaseAccount {
                             address: "trading-marker-addr".to_string(),
                             pub_key: None,
@@ -407,8 +408,8 @@ mod tests {
                         allow_forced_transfer: false,
                         required_attributes: vec![],
                     }
-                    .into(),
-                )),
+                    .encode_to_vec(),
+                }),
             },
         );
         let mut deps = mock_provenance_dependencies_with_custom_querier(querier);
@@ -569,7 +570,7 @@ mod tests {
                         allow_forced_transfer: false,
                         required_attributes: vec![],
                     }
-                    .into(),
+                    .encode_to_vec(),
                 }),
             },
         );

@@ -32,9 +32,10 @@ schemars = "=0.8.21"
 semver = "=1.0.16"
 serde = { version = "=1.0.204", default-features = false, features = ["derive"] }
 thiserror = "=1.0.50"
-prost = { version = "=0.11.9", default-features = false }
+prost = { version = "=0.12.6", default-features = false }
 uuid = "1.10.0"
 
 [dev-dependencies]
 cosmwasm-schema = "=2.1.0"
 provwasm-mocks = { git = "https://github.com/provenance-io/provwasm", tag = "v2.3.0-rc1" }
+provwasm-proc-macro = { git = "https://github.com/provenance-io/provwasm", tag = "v2.3.0-rc1" }
