@@ -1,7 +1,7 @@
 use crate::store::contract_state::{get_contract_state_v1, set_contract_state_v1, CONTRACT_TYPE};
 use crate::types::error::ContractError;
 use crate::util::validation_utils::check_funds_are_empty;
-use cosmwasm_std::{Api, DepsMut, Env, MessageInfo, Response};
+use cosmwasm_std::{DepsMut, Env, MessageInfo, Response};
 use result_extensions::ResultExtensions;
 
 /// Invoked via the contract's execute functionality.  This function will only accept the request if
@@ -54,7 +54,7 @@ mod tests {
     use crate::test::test_constants::{DEFAULT_ADMIN, DEFAULT_CONTRACT_NAME};
     use crate::test::test_instantiate::test_instantiate;
     use crate::types::error::ContractError;
-    use cosmwasm_std::testing::{message_info, mock_env, MockApi, MOCK_CONTRACT_ADDR};
+    use cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
     use cosmwasm_std::{coins, Addr};
     use provwasm_mocks::mock_provenance_dependencies;
 
