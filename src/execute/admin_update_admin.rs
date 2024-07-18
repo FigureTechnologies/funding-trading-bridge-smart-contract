@@ -12,6 +12,7 @@ use result_extensions::ResultExtensions;
 /// # Parameters
 /// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
 /// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `provided_api` An optional Api instance to validate the input address.
 /// * `env` An environment object provided by the cosmwasm framework.  Describes the contract's
 /// details, as well as blockchain information at the time of the transaction.
 /// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
