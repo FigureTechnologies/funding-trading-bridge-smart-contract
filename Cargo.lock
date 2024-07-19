@@ -781,8 +781,8 @@ dependencies = [
 
 [[package]]
 name = "provwasm-common"
-version = "0.1.0"
-source = "git+https://github.com/provenance-io/provwasm?tag=v2.3.0-rc1#40ffc8fc46dbe676b70a4fbd7b6a8deeb9b572d4"
+version = "0.1.1"
+source = "git+https://github.com/provenance-io/provwasm?tag=v2.3.0#a9d7c94a8c73e2a6e987e5c3375629a8c42e8d7f"
 dependencies = [
  "cosmwasm-std",
 ]
@@ -790,7 +790,7 @@ dependencies = [
 [[package]]
 name = "provwasm-mocks"
 version = "2.3.0"
-source = "git+https://github.com/provenance-io/provwasm?tag=v2.3.0-rc1#40ffc8fc46dbe676b70a4fbd7b6a8deeb9b572d4"
+source = "git+https://github.com/provenance-io/provwasm?tag=v2.3.0#a9d7c94a8c73e2a6e987e5c3375629a8c42e8d7f"
 dependencies = [
  "cosmwasm-std",
  "provwasm-common",
@@ -802,7 +802,7 @@ dependencies = [
 [[package]]
 name = "provwasm-proc-macro"
 version = "0.1.2"
-source = "git+https://github.com/provenance-io/provwasm?tag=v2.3.0-rc1#40ffc8fc46dbe676b70a4fbd7b6a8deeb9b572d4"
+source = "git+https://github.com/provenance-io/provwasm?tag=v2.3.0#a9d7c94a8c73e2a6e987e5c3375629a8c42e8d7f"
 dependencies = [
  "itertools 0.11.0",
  "proc-macro2",
@@ -815,7 +815,7 @@ dependencies = [
 [[package]]
 name = "provwasm-std"
 version = "2.3.0"
-source = "git+https://github.com/provenance-io/provwasm?tag=v2.3.0-rc1#40ffc8fc46dbe676b70a4fbd7b6a8deeb9b572d4"
+source = "git+https://github.com/provenance-io/provwasm?tag=v2.3.0#a9d7c94a8c73e2a6e987e5c3375629a8c42e8d7f"
 dependencies = [
  "base64 0.21.7",
  "chrono",
